@@ -5469,11 +5469,11 @@ void fct_sllv() {
         print((int*) ",");
         printRegister(rs);
         if(interpret) {
-            print((int*) ": ");
             printRegister(rd);
             print((int*) "=");
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
             print((int*) ",");
+            print((int*) ": ");
             printRegister(rt);
             print((int*) "=");
             print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
@@ -5484,7 +5484,7 @@ void fct_sllv() {
         }
     }
     if(interpret) {
-        *(registers+rd) = leftShift(registers+rt, registers+rs);
+        *(registers+rd) = leftShift(*(registers+rt), *(registers+rs) );
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5523,7 +5523,7 @@ void fct_srlv() {
         }
     }
     if(interpret) {
-        *(registers+rd) = rightShift(registers+rt, registers+rs);
+        *(registers+rd) = rightShift(*(registers+rt), *(registers+rs));
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5558,7 +5558,7 @@ void fct_sll() {
         }
     }
     if (interpret) {
-        *(registers+rd) = leftShift(registers+rt, signExtend(immediate));
+        *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
         pc = pc + WORDSIZE;
     }
     if (debug) {
@@ -5594,7 +5594,7 @@ void fct_slr() {
         }
     }
     if (interpret) {
-        *(registers+rd) = rightShift(registers+rt, signExtend(immediate));
+        *(registers+rd) = rightShift(*(registers+rt), signExtend(immediate));
         pc = pc + WORDSIZE;
     }
     if (debug) {
