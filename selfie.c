@@ -898,7 +898,7 @@ void fct_subu();
 void fct_sll();
 void fct_sllv();
 void fct_slr();
-void fct_slrv();
+void fct_srlv();
 void op_lw();
 void fct_slt();
 void op_sw();
@@ -5498,7 +5498,7 @@ void fct_sllv() {
     }
 }
 
-void fct_slrv() {
+void fct_srlv() {
     if(debug) {
         printFunction(function);
         print((int*) " ");
