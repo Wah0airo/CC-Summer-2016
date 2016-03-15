@@ -5469,11 +5469,11 @@ void fct_sllv() {
         print((int*) ",");
         printRegister(rs);
         if(interpret) {
-            print((int*) ": ");
             printRegister(rd);
             print((int*) "=");
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
             print((int*) ",");
+            print((int*) ": ");
             printRegister(rt);
             print((int*) "=");
             print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
@@ -5484,7 +5484,11 @@ void fct_sllv() {
         }
     }
     if(interpret) {
+<<<<<<< HEAD
         *(registers+rd) = leftShift(*(registers+rt), *(registers+rs));
+=======
+        *(registers+rd) = leftShift(*(registers+rt), *(registers+rs) );
+>>>>>>> refs/remotes/origin/origin/selfie-master
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5558,12 +5562,17 @@ void fct_sll() {
         }
     }
     if (interpret) {
+<<<<<<< HEAD
         if(signExtend(immediate)==0)
             fct_nop();
         else {
             *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
             pc = pc + WORDSIZE;
         }
+=======
+        *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
+        pc = pc + WORDSIZE;
+>>>>>>> refs/remotes/origin/origin/selfie-master
     }
     if (debug) {
         if (interpret) {
