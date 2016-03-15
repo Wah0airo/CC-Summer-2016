@@ -898,7 +898,7 @@ void fct_subu();
 void fct_sll();
 void fct_sllv();
 void fct_slr();
-void fct_slrv();
+void fct_srlv();
 void op_lw();
 void fct_slt();
 void op_sw();
@@ -5484,7 +5484,7 @@ void fct_sllv() {
         }
     }
     if(interpret) {
-        *(registers+rd) = leftShift(registers+rt, registers+rs);
+        *(registers+rd) = leftShift(*(registers+rt), *(registers+rs));
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5498,7 +5498,7 @@ void fct_sllv() {
     }
 }
 
-void fct_slrv() {
+void fct_srlv() {
     if(debug) {
         printFunction(function);
         print((int*) " ");
@@ -5523,7 +5523,7 @@ void fct_slrv() {
         }
     }
     if(interpret) {
-        *(registers+rd) = rightShift(registers+rt, registers+rs);
+        *(registers+rd) = rightShift(*(registers+rt), *(registers+rs));
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5558,8 +5558,12 @@ void fct_sll() {
         }
     }
     if (interpret) {
-        *(registers+rd) = leftShift(registers+rt, signExtend(immediate));
-        pc = pc + WORDSIZE;
+        if(signExtend(immediate)==0)
+            fct_nop();
+        else {
+            *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
+            pc = pc + WORDSIZE;
+        }
     }
     if (debug) {
         if (interpret) {
@@ -5594,7 +5598,7 @@ void fct_slr() {
         }
     }
     if (interpret) {
-        *(registers+rd) = rightShift(registers+rt, signExtend(immediate));
+        *(registers+rd) = rightShift(*(registers+rt), signExtend(immediate));
         pc = pc + WORDSIZE;
     }
     if (debug) {
