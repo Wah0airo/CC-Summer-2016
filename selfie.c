@@ -6709,5 +6709,93 @@ int main(int argc, int *argv) {
         println();
     }
 
-	;return 0;
+	//Test Cases
+	print((int*)"Test right shift -shifting a variable by varible");
+    println();
+    a = 16; b=3; c = a>>b;
+	printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+
+    print((int*)"Test right shift with immediate value");
+    println();
+    a = 16;  c = a>>-3;
+	printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+
+	print((int*)"Test left shift-shifting a variable by varible");
+    println();
+	a = 8; b = 4; c = a << b;
+	printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+
+    print((int*)"Test left shift with immediate value");
+    println();
+	a = 8; c = a << 4;
+	printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test addition with immediate value");
+    println();
+    a = 8; c = a + 4;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test addition a variable by varible");
+    println();
+    a = 8; b = 5; c = a + b;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test substraction with immediate value");
+    println();
+    a = 8; c = a - 2;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test substraction a variable by varible");
+    println();
+    a = 8; b = 5; c = a - b;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test multiplication with immediate value");
+    println();
+    a = 8; c = a * 2;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test multiplication a variable by varible");
+    println();
+    a = 8; b = 5; c = a * b;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test division with immediate value");
+    println();
+    a = 8; c = a / 2;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test division a variable by varible");
+    println();
+    a = 8; b = 4; c = a / b;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test modulo with immediate value");
+    println();
+    a = 8; c = a % 3;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    
+    print((int*)"Test modulo a variable by varible");
+    println();
+    a = 8; b = 5; c = a % b;
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+
+    //println();
+    //printCharacter(b); // Prints out character to show
+    //println();
+    print((int*)"End of Main");println();return 0;
 }

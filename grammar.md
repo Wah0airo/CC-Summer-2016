@@ -35,9 +35,11 @@ factor           = [ cast ]
 
 term             = factor { ( "*" | "/" | "%" ) factor } .
 
-simpleExpression = [ "-" ] term { ( "+" | "-" ) term } .
+simpleExpression = term { ( "+" | "-" ) term } .
 
-expression       = simpleExpression [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) simpleExpression ] .
+shiftExpression = ([ "-" ] )simpleExpression { („<<„ | „>>“) simpleExpression } .
+
+expression       = shiftExpression [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) shiftExpression ] .
 
 while            = "while" "(" expression ")" 
                              ( statement |
@@ -66,4 +68,6 @@ procedure        = "(" [ variable { "," variable } ] ")"
 
 cstar            = { type identifier [ "=" [ cast ] [ "-" ] constant ] ";" |
                    ( "void" | type ) identifier procedure } .
+
+INT_T
 ```
