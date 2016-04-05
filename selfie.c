@@ -36,11 +36,11 @@
 // into the emulator.
 //
 // C* is a tiny Turing-complete subset of C that includes dereferencing
-// (the * operator) but excludes data structures, bitwise and Boolean
+// (the * operator) but excludes composite data types, bitwise and Boolean
 // operators, and many other features. There are only signed 32-bit
-// integers and pointers as well as character and string literals.
+// integers and 32-bit pointers as well as character and string literals.
 // This choice turns out to be helpful for students to understand the
-// true role of composite data structures such as arrays and records.
+// true role of composite data types such as arrays and records.
 // Bitwise operations are implemented in libcstar using signed integer
 // arithmetics helping students gain true understanding of two's complement.
 // C* is supposed to be close to the minimum necessary for implementing
@@ -146,8 +146,11 @@ int SIZEOFINTSTAR = 4; // must be the same as WORDSIZE
 
 int *power_of_two_table;
 
-int INT_MAX; // maximum numerical value of an integer
-int INT_MIN; // minimum numerical value of an integer
+int INT_MAX; // maximum numerical value of a signed 32-bit integer
+int INT_MIN; // minimum numerical value of a signed 32-bit integer
+
+int INT16_MAX; // maximum numerical value of a signed 16-bit integer
+int INT16_MIN; // minimum numerical value of a signed 16-bit integer
 
 int maxFilenameLength = 128;
 
@@ -190,6 +193,9 @@ void initLibrary() {
     // computing INT_MAX and INT_MIN without overflows
     INT_MAX = (twoToThePowerOf(30) - 1) * 2 + 1;
     INT_MIN = -INT_MAX - 1;
+    
+    INT16_MAX = twoToThePowerOf(15) - 1;
+    INT16_MIN = -INT16_MAX - 1;
 
     // allocate and touch to make sure memory is mapped for read calls
     character_buffer  = malloc(1);
@@ -269,6 +275,8 @@ int SYM_NOTEQ        = 24; // !=
 int SYM_MOD          = 25; // %
 int SYM_CHARACTER    = 26; // character
 int SYM_STRING       = 27; // string
+int SYM_LSHIFT       = 28;
+int SYM_RSHIFT       = 29;
 
 int *SYMBOLS; // array of strings representing symbols
 
@@ -300,7 +308,7 @@ int sourceFD    = 0;        // file descriptor of open source file
 // ------------------------- INITIALIZATION ------------------------
 
 void initScanner () {
-    SYMBOLS = malloc(28 * SIZEOFINTSTAR);
+    SYMBOLS = malloc(30 * SIZEOFINTSTAR);
 
     *(SYMBOLS + SYM_IDENTIFIER)   = (int) "identifier";
     *(SYMBOLS + SYM_INTEGER)      = (int) "integer";
@@ -330,6 +338,8 @@ void initScanner () {
     *(SYMBOLS + SYM_MOD)          = (int) "%";
     *(SYMBOLS + SYM_CHARACTER)    = (int) "character";
     *(SYMBOLS + SYM_STRING)       = (int) "string";
+    *(SYMBOLS + SYM_LSHIFT)       = (int) "<<";
+    *(SYMBOLS + SYM_RSHIFT)       = (int) ">>";
 
     character = CHAR_EOF;
     symbol    = SYM_EOF;
@@ -427,7 +437,7 @@ int isLiteral();
 int isStarOrDivOrModulo();
 int isPlusOrMinus();
 int isComparison();
-
+int isLeftShiftOrRightShift();
 int lookForFactor();
 int lookForStatement();
 int lookForType();
@@ -453,6 +463,7 @@ int  gr_call(int *procedure);
 int  gr_factor();
 int  gr_term();
 int  gr_simpleExpression();
+int  gr_shiftExpression();
 int  gr_expression();
 void gr_while();
 void gr_if();
@@ -1177,24 +1188,31 @@ int twoToThePowerOf(int p) {
 int leftShift(int n, int b) {
     // assert: b >= 0;
 
-    if (b > 30)
-        return 0;
-    else
+    if (b < 31)
         return n * twoToThePowerOf(b);
+    else if (b == 31)
+        return n * twoToThePowerOf(30) * 2;
+    else
+        return 0;
 }
 
 int rightShift(int n, int b) {
     // assert: b >= 0
 
-    if (b > 30)
-        return 0;
-    else if (n >= 0)
-        return n / twoToThePowerOf(b);
-    else
+    if (n >= 0) {
+        if (b < 31)
+            return n / twoToThePowerOf(b);
+        else
+            return 0;
+    } else if (b < 31)
         // works even if n == INT_MIN:
         // shift right n with msb reset and then restore msb
         return ((n + 1) + INT_MAX) / twoToThePowerOf(b) +
-            (INT_MAX / twoToThePowerOf(b) + 1);
+        (INT_MAX / twoToThePowerOf(b) + 1);
+    else if (b == 31)
+        return 1;
+    else
+        return 0;
 }
 
 int loadCharacter(int *s, int i) {
@@ -1880,24 +1898,39 @@ int getSymbol() {
 
         symbol = SYM_COMMA;
 
-    } else if (character == CHAR_LT) {
+    }
+    else if (character == CHAR_LT) {
         getCharacter();
+        
+        if(character == CHAR_LT) {
+            getCharacter();
+            symbol = SYM_LSHIFT;
+        }
 
-        if (character == CHAR_EQUAL) {
+        else if (character == CHAR_EQUAL) {
             getCharacter();
 
             symbol = SYM_LEQ;
-        } else
+        }
+        else
             symbol = SYM_LT;
 
-    } else if (character == CHAR_GT) {
+    }
+    else if (character == CHAR_GT) {
         getCharacter();
+        
+        if (character == CHAR_GT) {
+            getCharacter();
+            
+            symbol = SYM_RSHIFT;
+        }
 
-        if (character == CHAR_EQUAL) {
+        else if (character == CHAR_EQUAL) {
             getCharacter();
 
             symbol = SYM_GEQ;
-        } else
+        }
+        else
             symbol = SYM_GT;
 
     } else if (character == CHAR_EXCLAMATION) {
@@ -2088,6 +2121,15 @@ int isPlusOrMinus() {
     if (symbol == SYM_MINUS)
         return 1;
     else if (symbol == SYM_PLUS)
+        return 1;
+    else
+        return 0;
+}
+
+int isLeftShiftOrRightShift() {
+    if(symbol == SYM_LSHIFT)
+        return 1;
+    else if (symbol == SYM_RSHIFT)
         return 1;
     else
         return 0;
@@ -2600,8 +2642,12 @@ int gr_factor() {
             type = gr_call(variableOrProcedureName);
 
             talloc();
-
+            // retrieve return value
             emitIFormat(OP_ADDIU, REG_V0, currentTemporary(), 0);
+            
+            // reset return register
+            emitIFormat(OP_ADDIU, REG_ZR, REG_V0, 0);
+            
         } else
             // variable access: identifier
             type = load_variable(variableOrProcedureName);
@@ -2698,25 +2744,22 @@ int gr_term() {
     return ltype;
 }
 
-int gr_simpleExpression() {
+int gr_shiftExpression() {
     int sign;
     int ltype;
     int operatorSymbol;
     int rtype;
-
-    // assert: n = allocatedTemporaries
-
-    // optional: -
+    
     if (symbol == SYM_MINUS) {
         sign = 1;
-
+        
         mayBeINTMIN = 1;
         isINTMIN    = 0;
-
+        
         getSymbol();
-
+        
         mayBeINTMIN = 0;
-
+        
         if (isINTMIN) {
             isINTMIN = 0;
             
@@ -2726,21 +2769,70 @@ int gr_simpleExpression() {
         }
     } else
         sign = 0;
-
-    ltype = gr_term();
-
+    
+    ltype = gr_simpleExpression();
+    
     // assert: allocatedTemporaries == n + 1
-
+    
     if (sign) {
         if (ltype != INT_T) {
             typeWarning(INT_T, ltype);
-
+            
             ltype = INT_T;
         }
-
+        
         emitRFormat(OP_SPECIAL, REG_ZR, currentTemporary(), currentTemporary(), FCT_SUBU);
     }
 
+    
+    while(isLeftShiftOrRightShift()) {
+        operatorSymbol = symbol;
+        
+        getSymbol();
+        
+        rtype = gr_simpleExpression();
+        if (operatorSymbol == SYM_LSHIFT) {
+            if (ltype == INTSTAR_T) {
+                if (rtype == INT_T)
+                    // pointer arithmetic: factor of 2^2 of integer operand
+                    emitLeftShiftBy(2);
+            }
+            else if (rtype == INTSTAR_T)
+                typeWarning(ltype, rtype);
+            else if(rtype == SYM_INT) {
+                //TODO rtype
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), signExtend(rtype), FCT_SLLV);
+            }
+            else
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SLL);
+            
+        }
+        else if (operatorSymbol == SYM_RSHIFT) {
+            if (ltype != rtype)
+                typeWarning(ltype, rtype);
+            else if(rtype == SYM_INT) {
+                //TODO rtype
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), signExtend(rtype), FCT_SRLV);
+            }
+            else
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SRL);
+        }
+        tfree(1);
+    }
+    
+    return ltype;
+
+}
+
+int gr_simpleExpression() {
+    //int sign;
+    int ltype;
+    int operatorSymbol;
+    int rtype;
+
+    // assert: n = allocatedTemporaries
+
+    ltype = gr_term();
     // + or -?
     while (isPlusOrMinus()) {
         operatorSymbol = symbol;
@@ -2783,7 +2875,7 @@ int gr_expression() {
 
     // assert: n = allocatedTemporaries
 
-    ltype = gr_simpleExpression();
+    ltype = gr_shiftExpression();
 
     // assert: allocatedTemporaries == n + 1
 
@@ -2793,7 +2885,7 @@ int gr_expression() {
 
         getSymbol();
 
-        rtype = gr_simpleExpression();
+        rtype = gr_shiftExpression();
 
         // assert: allocatedTemporaries == n + 2
 
@@ -3150,6 +3242,9 @@ void gr_statement() {
             getSymbol();
 
             gr_call(variableOrProcedureName);
+            
+            // reset return register
+            emitIFormat(OP_ADDIU, REG_ZR, REG_V0, 0);
 
             if (symbol == SYM_SEMICOLON)
                 getSymbol();
@@ -3540,9 +3635,9 @@ void emitMainEntry() {
     // jump and link to main, will return here only if there is no exit call
     emitJFormat(OP_JAL, 0);
 
-    // we exit cleanly with error code 0 pushed onto the stack
+    // we exit with exit code in return register pushed onto the stack
     emitIFormat(OP_ADDIU, REG_SP, REG_SP, -WORDSIZE);
-    emitIFormat(OP_SW, REG_SP, REG_ZR, 0);
+    emitIFormat(OP_SW, REG_SP, REG_V0, 0);
 }
 
 void fixRegisterInitialization() {
@@ -4019,6 +4114,9 @@ int* touch(int *memory, int length) {
         // touch at end
         n = *m;
     }
+    
+    // avoids unused warning for n
+    n = 0; n = n + 1;
 
     return memory;
 }
@@ -4107,10 +4205,20 @@ void emitExit() {
 }
 
 void implementExit() {
-    throwException(EXCEPTION_EXIT, *(registers+REG_A0)); // exit code
-
+    int exitCode;
+    
+    exitCode = *(registers+REG_A0);
+    
+    // exit code must be signed 16-bit integer
+    if (exitCode > INT16_MAX)
+        exitCode = INT16_MAX;
+    else if (exitCode < INT16_MIN)
+        exitCode = INT16_MIN;
+    
+    throwException(EXCEPTION_EXIT, exitCode);
+    
     print(binaryName);
-    print((int*) ": exiting with error code ");
+    print((int*) ": exiting with exit code ");
     print(itoa(*(registers+REG_A0), string_buffer, 10, 0, 0));
     println();
 }
@@ -5469,11 +5577,11 @@ void fct_sllv() {
         print((int*) ",");
         printRegister(rs);
         if(interpret) {
+            print((int*) ": ");
             printRegister(rd);
             print((int*) "=");
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
             print((int*) ",");
-            print((int*) ": ");
             printRegister(rt);
             print((int*) "=");
             print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
@@ -5484,11 +5592,8 @@ void fct_sllv() {
         }
     }
     if(interpret) {
-<<<<<<< HEAD
         *(registers+rd) = leftShift(*(registers+rt), *(registers+rs));
-=======
-        *(registers+rd) = leftShift(*(registers+rt), *(registers+rs) );
->>>>>>> refs/remotes/origin/origin/selfie-master
+        print((int *) "fct_sllv rd=");
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -5562,17 +5667,12 @@ void fct_sll() {
         }
     }
     if (interpret) {
-<<<<<<< HEAD
         if(signExtend(immediate)==0)
             fct_nop();
         else {
             *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
             pc = pc + WORDSIZE;
         }
-=======
-        *(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
-        pc = pc + WORDSIZE;
->>>>>>> refs/remotes/origin/origin/selfie-master
     }
     if (debug) {
         if (interpret) {
@@ -5670,8 +5770,8 @@ void op_lw() {
             printRegister(rt);
             print((int*) "=");
             print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
-            print((int*) "=memory[vaddr=");
-            print(itoa(vaddr, string_buffer, 16, 8, 0));
+            print((int*) "=memory[");
+            print(itoa(vaddr, string_buffer, 16, 0, 0));
             print((int*) "]");
         }
         println();
@@ -5764,8 +5864,8 @@ void op_sw() {
 
     if (debug) {
         if (interpret) {
-            print((int*) " -> memory[vaddr=");
-            print(itoa(vaddr, string_buffer, 16, 8, 0));
+            print((int*) " -> memory[");
+            print(itoa(vaddr, string_buffer, 16, 0, 0));
             print((int*) "]=");
             print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
             print((int*) "=");
@@ -5856,12 +5956,14 @@ void execute() {
             print((int*) "$pc=");
 
     if (debug) {
-        print(itoa(pc, string_buffer, 16, 8, 0));
+        print(itoa(pc, string_buffer, 16, 0, 0));
         if (sourceLineNumber != (int*) 0) {
             print((int*) "(~");
             print(itoa(*(sourceLineNumber + pc / WORDSIZE), string_buffer, 10, 0, 0));
             print((int*) ")");
         }
+        print((int*) ": ");
+        print(itoa(ir, string_buffer, 16, 8, 0));
         print((int*) ": ");
     }
 
@@ -6143,7 +6245,7 @@ int printCounters(int total, int *counters, int max) {
     
     if (*(counters + a / WORDSIZE) != 0) {
         print((int*) "@");
-        print(itoa(a, string_buffer, 16, 8, 0));
+        print(itoa(a, string_buffer, 16, 0, 0));
         if (sourceLineNumber != (int*) 0) {
             print((int*) "(~");
             print(itoa(*(sourceLineNumber + a / WORDSIZE), string_buffer, 10, 0, 0));
@@ -6581,6 +6683,10 @@ int selfie(int argc, int* argv) {
     return 0;
 }
 
+int a;
+int b;
+int c;
+
 int main(int argc, int *argv) {
     initLibrary();
 
@@ -6602,4 +6708,6 @@ int main(int argc, int *argv) {
         print((int*) ": usage: selfie { -c source | -o binary | -s assembly | -l binary } [ -m size ... | -d size ... | -y size ... ] ");
         println();
     }
+
+	;return 0;
 }
