@@ -669,7 +669,10 @@ void initDecoder() {
     OPCODES = malloc(44 * SIZEOFINTSTAR);
 
     //*(OPCODES + OP_SPECIAL) = (int) "nop";
+<<<<<<< HEAD
     *(OPCODES + OP_SPECIAL) = (int) "sll";
+=======
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     *(OPCODES + OP_J)       = (int) "j";
     *(OPCODES + OP_JAL)     = (int) "jal";
     *(OPCODES + OP_BEQ)     = (int) "beq";
@@ -1212,9 +1215,14 @@ int rightShift(int n, int b) {
     } else if (b < 31)
         // works even if n == INT_MIN:
         // shift right n with msb reset and then restore msb
+<<<<<<< HEAD
         return ((n + 1) + INT_MAX) / twoToThePowerOf(b) + (INT_MAX / twoToThePowerOf(b) + 1);
         //it doesnt still works on self compilation
         //return ((n + 1) + INT_MAX) >> b + (INT_MAX >> b + 1);
+=======
+        //return ((n + 1) + INT_MAX) / twoToThePowerOf(b) + (INT_MAX / twoToThePowerOf(b) + 1);
+        return ((n + 1) + INT_MAX) >> b + (INT_MAX >> b + 1);
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     else if (b == 31)
         return 1;
     else
@@ -2773,11 +2781,19 @@ int gr_shiftExpression() {
         else {
             //TODO sign Extent?
             if (operatorSymbol == SYM_LSHIFT) {
+<<<<<<< HEAD
                 emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLLV);
             }
             else if (operatorSymbol == SYM_RSHIFT) {
                 //TODO rtype
                 emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SRLV);
+=======
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), FCT_SLLV);
+            }
+            else if (operatorSymbol == SYM_RSHIFT) {
+                //TODO rtype
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), FCT_SRLV);
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
             }
         }
         tfree(1);
@@ -3621,7 +3637,11 @@ void emitMainEntry() {
     // since we load positive integers < 2^28 which take
     // no more than 8 instructions each, see load_integer
     while (i < 16) {
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL);
+=======
+        emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL);
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
 
         i = i + 1;
     }
@@ -3778,7 +3798,20 @@ int encodeRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
     // assert: 0 <= rd < 2^5
     // assert: 0 <= shamt < 2^5
     // assert: 0 <= function < 2^6
+<<<<<<< HEAD
     
+=======
+    //shamt = rs
+    int shamt;
+    shamt = 0;
+    if (function == FCT_SLL) {
+        shamt = rs;
+        rs = 0;
+    } else if(function == FCT_SRL) {
+        shamt = rs;
+        rs = 0;
+    }
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     return leftShift(leftShift(leftShift(leftShift(leftShift(opcode, 5) + rs, 5) + rt, 5) + rd, 5) + shamt, 6) + function;
 }
 
@@ -3962,6 +3995,7 @@ void emitRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
 
     if (opcode == OP_SPECIAL) {
         if (function == FCT_JR)
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
         else if (function == FCT_MFLO) {
             // In MIPS I-III two instructions after MFLO/MFHI
@@ -3971,6 +4005,17 @@ void emitRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
         } else if (function == FCT_MFHI) {
             emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // pipeline delay
             emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // pipeline delay
+=======
+            emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // delay slot
+        else if (function == FCT_MFLO) {
+            // In MIPS I-III two instructions after MFLO/MFHI
+            // must not modify the LO/HI registers
+            emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // pipeline delay
+            emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // pipeline delay
+        } else if (function == FCT_MFHI) {
+            emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // pipeline delay
+            emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // pipeline delay
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
         }
     }
 }
@@ -3979,15 +4024,25 @@ void emitIFormat(int opcode, int rs, int rt, int immediate) {
     emitInstruction(encodeIFormat(opcode, rs, rt, immediate));
 
     if (opcode == OP_BEQ)
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
     else if (opcode == OP_BNE)
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
+=======
+        emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // delay slot
+    else if (opcode == OP_BNE)
+        emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // delay slot
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
 }
 
 void emitJFormat(int opcode, int instr_index) {
     emitInstruction(encodeJFormat(opcode, instr_index));
 
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
+=======
+    emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SLL); // delay slot
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
 }
 
 void fixup_relative(int fromAddress) {
@@ -5669,7 +5724,17 @@ void fct_sll() {
                 print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
             }
         }
+<<<<<<< HEAD
         if (interpret) {
+=======
+    }
+    if (interpret) {
+        if(immediate < 0) {
+            pc = pc + WORDSIZE;
+            
+        }
+        else {
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
             //*(registers+rd) = leftShift(*(registers+rt), signExtend(immediate));
             *(registers+rd) = leftShift(*(registers+rt), immediate);
             pc = pc + WORDSIZE;
@@ -5985,9 +6050,15 @@ void execute() {
             fct_sll();
         else if(function == FCT_SLLV)
             fct_sllv();
+<<<<<<< HEAD
         else if(function == FCT_SRL)
             fct_srl();
         else if(function == FCT_SRLV)
+=======
+        else if(function == FCT_SLL)
+            fct_srl();
+        else if(function == FCT_SLL)
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
             fct_srlv();
         else if (function == FCT_ADDU)
             fct_addu();
@@ -6721,7 +6792,7 @@ int main(int argc, int *argv) {
 
     argc = argc - 1;
     argv = argv + 1;
-    print((int*) "This is Oohoo3ic Selfie");
+    //print((int*) "This is Oohoo3ic Selfie");
     println();
     if (selfie(argc, (int*) argv) != 0) {
         print(selfieName);
@@ -6731,32 +6802,48 @@ int main(int argc, int *argv) {
     //Test Cases
     print((int*)"Test right shift -shifting a variable by varible");
     println();
+<<<<<<< HEAD
     a = 16;
     b=3;
+=======
+    a = 16; b=3;
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     c = a>>b;
     printString(itoa(c, string_buffer, 10, 0, 0));
     println();
     
     print((int*)"Test left shift-shifting a variable by varible");
     println();
+<<<<<<< HEAD
     a = 8;
     b = 4;
+=======
+    a = 8; b = 4;
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     c = a << b;
     printString(itoa(c, string_buffer, 10, 0, 0));
     println();
     
     print((int*)"Test addition a variable by varible");
     println();
+<<<<<<< HEAD
     a = 8;
     b = 5;
+=======
+    a = 8; b = 5;
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     c = a + b;
     printString(itoa(c, string_buffer, 10, 0, 0));
     println();
     
     print((int*)"Test substraction a variable by varible");
     println();
+<<<<<<< HEAD
     a = 8;
     b = 5;
+=======
+    a = 8; b = 5;
+>>>>>>> 33a8e5458f4196e5a8e3f77ff9b090f944bb009f
     c = a - b;
     printString(itoa(c, string_buffer, 10, 0, 0));
     println();
