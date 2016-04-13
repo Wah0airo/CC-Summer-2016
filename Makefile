@@ -19,6 +19,6 @@ self: cself
 
 #cleans the executeable selfie file
 clean:
-	rm -f selfie
+	rm -f selfie *.m
 
 

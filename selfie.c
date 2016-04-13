@@ -1212,9 +1212,8 @@ int rightShift(int n, int b) {
     } else if (b < 31)
         // works even if n == INT_MIN:
         // shift right n with msb reset and then restore msb
-        return ((n + 1) + INT_MAX) / twoToThePowerOf(b) + (INT_MAX / twoToThePowerOf(b) + 1);
-        //it doesnt still works on self compilation
-        //return ((n + 1) + INT_MAX) >> b + (INT_MAX >> b + 1);
+       // return ((n + 1) + INT_MAX) / twoToThePowerOf(b) + (INT_MAX / twoToThePowerOf(b) + 1);
+        return ( ((n + 1) + INT_MAX) >> b) + ((INT_MAX >> b )+ 1);
     else if (b == 31)
         return 1;
     else
@@ -6707,7 +6706,7 @@ int main(int argc, int *argv) {
     int a;
     int b;
     int c;
-    
+    int d;
     initLibrary();
 
     initScanner();
@@ -6729,6 +6728,37 @@ int main(int argc, int *argv) {
         println();
     }
     //Test Cases
+	
+	print((int*) "Testing shift and arithmetic operations" );
+	println();
+	
+	d = INT_MAX;
+	d = d << 1;
+	print((int*) "INT_MAX << 1" );
+	printString( itoa(d,string_buffer,10,0,0)); //Wrap around 
+	println();
+	
+	d = INT_MIN;
+	d = d << 1;
+	print((int*) "INT_MIN << 1" );
+	printString( itoa(d,string_buffer,10,0,0)); //Wrap around 
+	println();
+
+
+	d = INT_MAX;
+	d = d >> 1;
+	print((int*) "INT_MAX >> 1" );
+	printString( itoa(d,string_buffer,10,0,0)); //Wrap around 
+	println();
+	
+	d = INT_MIN;
+	d = d >> 1;
+	print((int*) "INT_MIN >> 1" );
+	printString( itoa(d,string_buffer,10,0,0)); //Wrap around 
+	println();
+
+	
+
     print((int*)"Test right shift -shifting a variable by varible");
     println();
     a = 16;
