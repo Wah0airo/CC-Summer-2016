@@ -27,6 +27,8 @@ call             = identifier "(" [ expression { "," expression } ] ")" .
 
 literal          = integer | "'" ascii_character "'" .
 
+array            = "int" identifier "[" integer "]"  [ "=" "{"integer ...  "}" ]
+
 factor           = [ cast ] 
                     ( [ "*" ] ( identifier | "(" expression ")" ) |
                       call |
@@ -56,7 +58,9 @@ return           = "return" [ expression ] .
 
 statement        = ( [ "*" ] identifier | "*" "(" expression ")" ) "="
                       expression ";" |
+                    identifier "[" integer "]" "=" expression
                     call ";" | 
+                    ###array ";" |
                     while | 
                     if | 
                     return ";" .
@@ -64,7 +68,7 @@ statement        = ( [ "*" ] identifier | "*" "(" expression ")" ) "="
 variable         = type identifier .
 
 procedure        = "(" [ variable { "," variable } ] ")" 
-                    ( ";" | "{" { variable ";" } { statement } "}" ) .
+                    ( ";" | "{" { variable ";" } { array ";"}{ statement } "}" ) .
 
 cstar            = { type identifier [ "=" [ cast ] [ "-" ] literal ] ";" |
                    ( "void" | type ) identifier procedure } .
