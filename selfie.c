@@ -312,7 +312,11 @@ int  sourceFD   = 0;        // file descriptor of open source file
 // ------------------------- INITIALIZATION ------------------------
 
 void initScanner () {
+<<<<<<< HEAD
     SYMBOLS = malloc(32 * SIZEOFINTSTAR);
+=======
+  SYMBOLS = malloc(28 * SIZEOFINTSTAR);
+>>>>>>> upstream/selfie-master
 
   *(SYMBOLS + SYM_IDENTIFIER)   = (int) "identifier";
   *(SYMBOLS + SYM_INTEGER)      = (int) "integer";
@@ -342,11 +346,14 @@ void initScanner () {
   *(SYMBOLS + SYM_MOD)          = (int) "%";
   *(SYMBOLS + SYM_CHARACTER)    = (int) "character";
   *(SYMBOLS + SYM_STRING)       = (int) "string";
+<<<<<<< HEAD
   *(SYMBOLS + SYM_LSHIFT)       = (int) "<<";
   *(SYMBOLS + SYM_RSHIFT)       = (int) ">>";
   *(SYMBOLS + SYM_LBRACKET)     = (int) "[";
   *(SYMBOLS + SYM_RBRACKET)     = (int) "]";
 
+=======
+>>>>>>> upstream/selfie-master
 
   character = CHAR_EOF;
   symbol  = SYM_EOF;
@@ -401,8 +408,11 @@ void setType(int* entry, int type)          { *(entry + 4) = type; }
 void setValue(int* entry, int value)        { *(entry + 5) = value; }
 void setAddress(int* entry, int address)    { *(entry + 6) = address; }
 void setScope(int* entry, int scope)        { *(entry + 7) = scope; }
+<<<<<<< HEAD
 void setAttribute(int *list, int element) { *list = element; }
 int getAttribute(int *list) { return *(list); }
+=======
+>>>>>>> upstream/selfie-master
 
 // ------------------------ GLOBAL CONSTANTS -----------------------
 
@@ -427,7 +437,10 @@ int LIBRARY_TABLE = 3;
 int* global_symbol_table  = (int*) 0;
 int* local_symbol_table   = (int*) 0;
 int* library_symbol_table = (int*) 0;
+<<<<<<< HEAD
 int *attribute_list = (int*) 0;
+=======
+>>>>>>> upstream/selfie-master
 
 // ------------------------- INITIALIZATION ------------------------
 
@@ -470,7 +483,11 @@ void help_procedure_prologue(int localVariables);
 void help_procedure_epilogue(int parameters);
 
 int  gr_call(int* procedure);
+<<<<<<< HEAD
 int  gr_factor(int *list);
+=======
+int  gr_factor();
+>>>>>>> upstream/selfie-master
 int  gr_term();
 int  gr_simpleExpression();
 int  gr_shiftExpression();
@@ -492,12 +509,17 @@ int allocatedTemporaries = 0; // number of allocated temporaries
 int allocatedMemory = 0; // number of bytes for global variables and strings
 
 int returnBranches = 0; // fixup chain for return statements
+<<<<<<< HEAD
 
 int* currentProcedureName = (int*) 0; // name of currently parsed procedure
 
 int isLiteralNumber = 0; //boolean expression TODO docu
 
 int isOperation = 0;
+=======
+
+int* currentProcedureName = (int*) 0; // name of currently parsed procedure
+>>>>>>> upstream/selfie-master
 
 // -----------------------------------------------------------------
 // ---------------------- MACHINE CODE LIBRARY ---------------------
@@ -647,6 +669,11 @@ int OP_BNE     = 5;
 int OP_ADDIU   = 9;
 int OP_LW      = 35;
 int OP_SW      = 43;
+<<<<<<< HEAD
+=======
+
+int* OPCODES; // array of strings representing MIPS opcodes
+>>>>>>> upstream/selfie-master
 
 int* OPCODES; // array of strings representing MIPS opcodes
 
@@ -682,8 +709,12 @@ int instr_index = 0;
 void initDecoder() {
   OPCODES = malloc(44 * SIZEOFINTSTAR);
 
+<<<<<<< HEAD
     //*(OPCODES + OP_SPECIAL) = (int) "nop";
   *(OPCODES + OP_SPECIAL) = (int) "sll";
+=======
+  *(OPCODES + OP_SPECIAL) = (int) "nop";
+>>>>>>> upstream/selfie-master
   *(OPCODES + OP_J)       = (int) "j";
   *(OPCODES + OP_JAL)     = (int) "jal";
   *(OPCODES + OP_BEQ)     = (int) "beq";
@@ -694,11 +725,15 @@ void initDecoder() {
 
   FUNCTIONS = malloc(43 * SIZEOFINTSTAR);
 
+<<<<<<< HEAD
   //*(FUNCTIONS + FCT_NOP)     = (int) "nop";
   *(FUNCTIONS + FCT_SLL)     = (int) "sll";
   *(FUNCTIONS + FCT_SRL)     = (int) "srl";
   *(FUNCTIONS + FCT_SLLV)    = (int) "sllv";
   *(FUNCTIONS + FCT_SRLV)    = (int) "srlv";
+=======
+  *(FUNCTIONS + FCT_NOP)     = (int) "nop";
+>>>>>>> upstream/selfie-master
   *(FUNCTIONS + FCT_JR)      = (int) "jr";
   *(FUNCTIONS + FCT_SYSCALL) = (int) "syscall";
   *(FUNCTIONS + FCT_MFHI)    = (int) "mfhi";
@@ -1204,11 +1239,17 @@ int leftShift(int n, int b) {
   // assert: b >= 0;
 
   if (b < 31)
+<<<<<<< HEAD
         //return n * twoToThePowerOf(b);
         return n << b;
   else if (b == 31)
         //return n * twoToThePowerOf(30) * 2;
         return (n << 30) * 2;
+=======
+    return n * twoToThePowerOf(b);
+  else if (b == 31)
+    return n * twoToThePowerOf(30) * 2;
+>>>>>>> upstream/selfie-master
   else
     return 0;
 }
@@ -1218,16 +1259,25 @@ int rightShift(int n, int b) {
 
   if (n >= 0) {
     if (b < 31)
+<<<<<<< HEAD
             //return n / twoToThePowerOf(b);
             return n >> b;
+=======
+      return n / twoToThePowerOf(b);
+>>>>>>> upstream/selfie-master
     else
       return 0;
   } else if (b < 31)
     // works even if n == INT_MIN:
     // shift right n with msb reset and then restore msb
+<<<<<<< HEAD
         return ((n + 1) + INT_MAX) / twoToThePowerOf(b) + (INT_MAX / twoToThePowerOf(b) + 1);
         //it doesnt still works on self compilation
         //return ((n + 1) + INT_MAX) >> b + (INT_MAX >> b + 1);
+=======
+    return ((n + 1) + INT_MAX) / twoToThePowerOf(b) +
+      (INT_MAX / twoToThePowerOf(b) + 1);
+>>>>>>> upstream/selfie-master
   else if (b == 31)
     return 1;
   else
@@ -1356,12 +1406,21 @@ int* itoa(int n, int* s, int b, int a, int p) {
     i = 1;
   } else if (n < 0) {
     sign = 1;
+<<<<<<< HEAD
 
     if (b == 10) {
       if (n == INT_MIN) {
         // rightmost decimal digit of 32-bit INT_MIN
         storeCharacter(s, 0, '8');
 
+=======
+
+    if (b == 10) {
+      if (n == INT_MIN) {
+        // rightmost decimal digit of 32-bit INT_MIN
+        storeCharacter(s, 0, '8');
+
+>>>>>>> upstream/selfie-master
         // avoids overflow
         n = -(n / 10);
         i = 1;
@@ -1432,6 +1491,7 @@ int* itoa(int n, int* s, int b, int a, int p) {
 
     while (i < a) {
       storeCharacter(s, i, ' '); // align with spaces
+<<<<<<< HEAD
 
       i = i + 1;
     }
@@ -1446,6 +1506,22 @@ int* itoa(int n, int* s, int b, int a, int p) {
       storeCharacter(s, i, '0');   // octal numbers start with 00
       storeCharacter(s, i + 1, '0');
 
+=======
+
+      i = i + 1;
+    }
+  } else {
+    while (i < a) {
+      storeCharacter(s, i, '0'); // align with 0s
+
+      i = i + 1;
+    }
+
+    if (b == 8) {
+      storeCharacter(s, i, '0');   // octal numbers start with 00
+      storeCharacter(s, i + 1, '0');
+
+>>>>>>> upstream/selfie-master
       i = i + 2;
     } else if (b == 16) {
       storeCharacter(s, i, 'x');   // hexadecimal numbers start with 0x
@@ -1454,16 +1530,25 @@ int* itoa(int n, int* s, int b, int a, int p) {
       i = i + 2;
     }
   }
+<<<<<<< HEAD
 
   storeCharacter(s, i, 0); // null terminated string
 
   stringReverse(s);
 
+=======
+
+  storeCharacter(s, i, 0); // null terminated string
+
+  stringReverse(s);
+
+>>>>>>> upstream/selfie-master
   return s;
 }
 
 void putCharacter(int character) {
   *character_buffer = character;
+<<<<<<< HEAD
 
   // assert: character_buffer is mapped
 
@@ -1471,6 +1556,15 @@ void putCharacter(int character) {
     if (outputFD != 1) {
       outputFD = 1;
 
+=======
+
+  // assert: character_buffer is mapped
+
+  if (write(outputFD, character_buffer, 1) != 1) {
+    if (outputFD != 1) {
+      outputFD = 1;
+
+>>>>>>> upstream/selfie-master
       print(selfieName);
       print((int*) ": could not write character to output file ");
       print(outputName);
@@ -1729,6 +1823,7 @@ int identifierOrKeyword() {
 
 int getSymbol() {
   int i;
+<<<<<<< HEAD
 
   symbol = SYM_EOF;
 
@@ -1780,6 +1875,59 @@ int getSymbol() {
       getCharacter();
     }
 
+=======
+
+  symbol = SYM_EOF;
+
+  if (findNextCharacter() == CHAR_EOF)
+    return SYM_EOF;
+  else if (symbol == SYM_DIV)
+    // check here because / was recognized instead of //
+    return SYM_DIV;
+
+  if (isCharacterLetter()) {
+    identifier = malloc(maxIdentifierLength + 1);
+
+    i = 0;
+
+    while (isCharacterLetterOrDigitOrUnderscore()) {
+      if (i >= maxIdentifierLength) {
+        syntaxErrorMessage((int*) "identifier too long");
+
+        exit(-1);
+      }
+
+      storeCharacter(identifier, i, character);
+
+      i = i + 1;
+
+      getCharacter();
+    }
+
+    storeCharacter(identifier, i, 0); // null terminated string
+
+    symbol = identifierOrKeyword();
+
+  } else if (isCharacterDigit()) {
+    integer = malloc(maxIntegerLength + 1);
+
+    i = 0;
+
+    while (isCharacterDigit()) {
+      if (i >= maxIntegerLength) {
+        syntaxErrorMessage((int*) "integer out of bound");
+
+        exit(-1);
+      }
+
+      storeCharacter(integer, i, character);
+
+      i = i + 1;
+
+      getCharacter();
+    }
+
+>>>>>>> upstream/selfie-master
     storeCharacter(integer, i, 0); // null terminated string
 
     literal = atoi(integer);
@@ -1844,6 +1992,7 @@ int getSymbol() {
       storeCharacter(string, i, character);
 
       i = i + 1;
+<<<<<<< HEAD
 
       getCharacter();
     }
@@ -1975,13 +2124,127 @@ int getSymbol() {
 
     symbol = SYM_MOD;
 
+=======
+
+      getCharacter();
+    }
+
+    if (character == CHAR_DOUBLEQUOTE)
+      getCharacter();
+    else {
+      syntaxErrorCharacter(CHAR_DOUBLEQUOTE);
+
+      exit(-1);
+    }
+
+    storeCharacter(string, i, 0); // null terminated string
+
+    symbol = SYM_STRING;
+
+  } else if (character == CHAR_SEMICOLON) {
+    getCharacter();
+
+    symbol = SYM_SEMICOLON;
+
+  } else if (character == CHAR_PLUS) {
+    getCharacter();
+
+    symbol = SYM_PLUS;
+
+  } else if (character == CHAR_DASH) {
+    getCharacter();
+
+    symbol = SYM_MINUS;
+
+  } else if (character == CHAR_ASTERISK) {
+    getCharacter();
+
+    symbol = SYM_ASTERISK;
+
+  } else if (character == CHAR_EQUAL) {
+    getCharacter();
+
+    if (character == CHAR_EQUAL) {
+      getCharacter();
+
+      symbol = SYM_EQUALITY;
+    } else
+      symbol = SYM_ASSIGN;
+
+  } else if (character == CHAR_LPARENTHESIS) {
+    getCharacter();
+
+    symbol = SYM_LPARENTHESIS;
+
+  } else if (character == CHAR_RPARENTHESIS) {
+    getCharacter();
+
+    symbol = SYM_RPARENTHESIS;
+
+  } else if (character == CHAR_LBRACE) {
+    getCharacter();
+
+    symbol = SYM_LBRACE;
+
+  } else if (character == CHAR_RBRACE) {
+    getCharacter();
+
+    symbol = SYM_RBRACE;
+
+  } else if (character == CHAR_COMMA) {
+    getCharacter();
+
+    symbol = SYM_COMMA;
+
+  } else if (character == CHAR_LT) {
+    getCharacter();
+
+    if (character == CHAR_EQUAL) {
+      getCharacter();
+
+      symbol = SYM_LEQ;
+    } else
+      symbol = SYM_LT;
+
+  } else if (character == CHAR_GT) {
+    getCharacter();
+
+    if (character == CHAR_EQUAL) {
+      getCharacter();
+
+      symbol = SYM_GEQ;
+    } else
+      symbol = SYM_GT;
+
+  } else if (character == CHAR_EXCLAMATION) {
+    getCharacter();
+
+    if (character == CHAR_EQUAL)
+      getCharacter();
+    else
+      syntaxErrorCharacter(CHAR_EQUAL);
+
+    symbol = SYM_NOTEQ;
+
+  } else if (character == CHAR_PERCENTAGE) {
+    getCharacter();
+
+    symbol = SYM_MOD;
+
+>>>>>>> upstream/selfie-master
   } else {
     printLineNumber((int*) "error", lineNumber);
     print((int*) "found unknown character ");
     printCharacter(character);
+<<<<<<< HEAD
 
     println();
 
+=======
+
+    println();
+
+>>>>>>> upstream/selfie-master
     exit(-1);
   }
 
@@ -1994,6 +2257,7 @@ int getSymbol() {
 
 void createSymbolTableEntry(int whichTable, int* string, int line, int class, int type, int value, int address) {
   int* newEntry;
+<<<<<<< HEAD
 
   newEntry = malloc(2 * SIZEOFINTSTAR + 6 * SIZEOFINT);
 
@@ -2075,6 +2339,89 @@ int reportUndefinedProcedures() {
 
   entry = global_symbol_table;
 
+=======
+
+  newEntry = malloc(2 * SIZEOFINTSTAR + 6 * SIZEOFINT);
+
+  setString(newEntry, string);
+  setLineNumber(newEntry, line);
+  setClass(newEntry, class);
+  setType(newEntry, type);
+  setValue(newEntry, value);
+  setAddress(newEntry, address);
+
+  // create entry at head of symbol table
+  if (whichTable == GLOBAL_TABLE) {
+    setScope(newEntry, REG_GP);
+    setNextEntry(newEntry, global_symbol_table);
+    global_symbol_table = newEntry;
+  } else if (whichTable == LOCAL_TABLE) {
+    setScope(newEntry, REG_FP);
+    setNextEntry(newEntry, local_symbol_table);
+    local_symbol_table = newEntry;
+  } else {
+    // library procedures
+    setScope(newEntry, REG_GP);
+    setNextEntry(newEntry, library_symbol_table);
+    library_symbol_table = newEntry;
+  }
+}
+
+int* searchSymbolTable(int* entry, int* string, int class) {
+  while (entry != (int*) 0) {
+    if (stringCompare(string, getString(entry)))
+      if (class == getClass(entry))
+        return entry;
+
+    // keep looking
+    entry = getNextEntry(entry);
+  }
+
+  return (int*) 0;
+}
+
+int* getSymbolTableEntry(int* string, int class) {
+  int* entry;
+
+  if (class == VARIABLE) {
+    // local variables override global variables
+    entry = searchSymbolTable(local_symbol_table, string, class);
+
+    if (entry != (int*) 0)
+      return entry;
+  }
+
+  return searchSymbolTable(global_symbol_table, string, class);
+}
+
+int isUndefinedProcedure(int* entry) {
+  int* libraryEntry;
+
+  if (getClass(entry) == PROCEDURE) {
+    // library procedures override regular procedures for bootstrapping
+    libraryEntry = searchSymbolTable(library_symbol_table, getString(entry), PROCEDURE);
+
+    if (libraryEntry != (int*) 0)
+      entry = libraryEntry;
+
+    if (getAddress(entry) == 0)
+      return 1;
+    else if (getOpcode(loadBinary(getAddress(entry))) == OP_JAL)
+      return 1;
+  }
+
+  return 0;
+}
+
+int reportUndefinedProcedures() {
+  int undefined;
+  int* entry;
+
+  undefined = 0;
+
+  entry = global_symbol_table;
+
+>>>>>>> upstream/selfie-master
   while (entry != (int*) 0) {
     if (isUndefinedProcedure(entry)) {
       undefined = 1;
@@ -2151,6 +2498,7 @@ int isPlusOrMinus() {
     return 1;
   else
     return 0;
+<<<<<<< HEAD
 }
 
 int isLeftShiftOrRightShift() {
@@ -2160,6 +2508,8 @@ int isLeftShiftOrRightShift() {
         return 1;
     else
         return 0;
+=======
+>>>>>>> upstream/selfie-master
 }
 
 int isComparison() {
@@ -2238,6 +2588,7 @@ void talloc() {
 }
 
 int currentTemporary() {
+<<<<<<< HEAD
     int temp;
   if (allocatedTemporaries > 0)
     return allocatedTemporaries + REG_A3;
@@ -2250,11 +2601,19 @@ int currentTemporary() {
         println();
         printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
         println();
+=======
+  if (allocatedTemporaries > 0)
+    return allocatedTemporaries + REG_A3;
+  else {
+    syntaxErrorMessage((int*) "illegal register access");
+
+>>>>>>> upstream/selfie-master
     exit(-1);
   }
 }
 
 int previousTemporary() {
+<<<<<<< HEAD
     int temp;
   if (allocatedTemporaries > 1)
     return currentTemporary() - 1;
@@ -2267,6 +2626,13 @@ int previousTemporary() {
         println();
         printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
         println();
+=======
+  if (allocatedTemporaries > 1)
+    return currentTemporary() - 1;
+  else {
+    syntaxErrorMessage((int*) "illegal register access");
+
+>>>>>>> upstream/selfie-master
     exit(-1);
   }
 }
@@ -2283,11 +2649,14 @@ int nextTemporary() {
 
 void tfree(int numberOfTemporaries) {
   allocatedTemporaries = allocatedTemporaries - numberOfTemporaries;
+<<<<<<< HEAD
     //print((int*)"tfree: allocatedTemporaries: ");
     //printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
     //print((int*)"numberOfTemporaries: ");
     //printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
     //println();
+=======
+>>>>>>> upstream/selfie-master
 
   if (allocatedTemporaries < 0) {
     syntaxErrorMessage((int*) "illegal register deallocation");
@@ -2520,13 +2889,18 @@ void help_procedure_epilogue(int parameters) {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, (parameters + 1) * WORDSIZE);
 
   // return
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 int gr_call(int* procedure) {
   int* entry;
   int numberOfTemporaries;
   int type;
+<<<<<<< HEAD
 
   // assert: n = allocatedTemporaries
 
@@ -2549,6 +2923,26 @@ int gr_call(int* procedure) {
         //print((int*) "call isExpression() allocatedtemporaries: ");
         //printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
         //println();
+=======
+
+  // assert: n = allocatedTemporaries
+
+  // library procedures override regular procedures for bootstrapping
+  entry = searchSymbolTable(library_symbol_table, procedure, PROCEDURE);
+
+  if (entry == (int*) 0)
+    entry = getSymbolTableEntry(procedure, PROCEDURE);
+
+  numberOfTemporaries = allocatedTemporaries;
+
+  save_temporaries();
+
+  // assert: allocatedTemporaries == 0
+
+  if (isExpression()) {
+    gr_expression();
+
+>>>>>>> upstream/selfie-master
     // TODO: check if types/number of parameters is correct
 
     // push first parameter onto stack
@@ -2580,6 +2974,7 @@ int gr_call(int* procedure) {
     }
   } else if (symbol == SYM_RPARENTHESIS) {
     getSymbol();
+<<<<<<< HEAD
 
     type = help_call_codegen(entry, procedure);
   } else {
@@ -2594,17 +2989,38 @@ int gr_call(int* procedure) {
     //print((int*) "call allocatedtemporaries: ");
     //printString(itoa(allocatedTemporaries, string_buffer, 10, 0, 0));
     //println();
+=======
+
+    type = help_call_codegen(entry, procedure);
+  } else {
+    syntaxErrorSymbol(SYM_RPARENTHESIS);
+
+    type = INT_T;
+  }
+
+  // assert: allocatedTemporaries == 0
+
+  restore_temporaries(numberOfTemporaries);
+
+>>>>>>> upstream/selfie-master
   // assert: allocatedTemporaries == n
   return type;
 }
 
+<<<<<<< HEAD
 int gr_factor(int *list) {
+=======
+int gr_factor() {
+>>>>>>> upstream/selfie-master
   int hasCast;
   int cast;
   int type;
 
   int* variableOrProcedureName;
+<<<<<<< HEAD
     int temp_l;
+=======
+>>>>>>> upstream/selfie-master
 
   // assert: n = allocatedTemporaries
 
@@ -2623,7 +3039,10 @@ int gr_factor(int *list) {
 
   // optional cast: [ cast ]
   if (symbol == SYM_LPARENTHESIS) {
+<<<<<<< HEAD
         isLiteralNumber = 0;
+=======
+>>>>>>> upstream/selfie-master
     getSymbol();
 
     // cast: "(" "int" [ "*" ] ")"
@@ -2638,8 +3057,12 @@ int gr_factor(int *list) {
         syntaxErrorSymbol(SYM_RPARENTHESIS);
 
     // not a cast: "(" expression ")"
+<<<<<<< HEAD
         }
         else {
+=======
+    } else {
+>>>>>>> upstream/selfie-master
       type = gr_expression();
 
       if (symbol == SYM_RPARENTHESIS)
@@ -2655,6 +3078,7 @@ int gr_factor(int *list) {
 
   // dereference?
   if (symbol == SYM_ASTERISK) {
+<<<<<<< HEAD
         isLiteralNumber = 0;
     getSymbol();
 
@@ -2802,12 +3226,97 @@ int gr_factor(int *list) {
         isLiteralNumber = 0;
     getSymbol();
 
+=======
+    getSymbol();
+
+    // ["*"] identifier
+    if (symbol == SYM_IDENTIFIER) {
+      type = load_variable(identifier);
+
+      getSymbol();
+
+    // * "(" expression ")"
+    } else if (symbol == SYM_LPARENTHESIS) {
+      getSymbol();
+
+      type = gr_expression();
+
+      if (symbol == SYM_RPARENTHESIS)
+        getSymbol();
+      else
+        syntaxErrorSymbol(SYM_RPARENTHESIS);
+    } else
+      syntaxErrorUnexpected();
+
+    if (type != INTSTAR_T)
+      typeWarning(INTSTAR_T, type);
+
+    // dereference
+    emitIFormat(OP_LW, currentTemporary(), currentTemporary(), 0);
+
+    type = INT_T;
+
+  // identifier?
+  } else if (symbol == SYM_IDENTIFIER) {
+    variableOrProcedureName = identifier;
+
+    getSymbol();
+
+    if (symbol == SYM_LPARENTHESIS) {
+      getSymbol();
+
+      // function call: identifier "(" ... ")"
+      type = gr_call(variableOrProcedureName);
+
+      talloc();
+
+      // retrieve return value
+      emitIFormat(OP_ADDIU, REG_V0, currentTemporary(), 0);
+
+      // reset return register
+      emitIFormat(OP_ADDIU, REG_ZR, REG_V0, 0);
+    } else
+      // variable access: identifier
+      type = load_variable(variableOrProcedureName);
+
+  // integer?
+  } else if (symbol == SYM_INTEGER) {
+    load_integer(literal);
+
+    getSymbol();
+
+    type = INT_T;
+
+  // character?
+  } else if (symbol == SYM_CHARACTER) {
+    talloc();
+
+    emitIFormat(OP_ADDIU, REG_ZR, currentTemporary(), literal);
+
+    getSymbol();
+
+    type = INT_T;
+
+  // string?
+  } else if (symbol == SYM_STRING) {
+    load_string(string);
+
+    getSymbol();
+
+    type = INTSTAR_T;
+
+  //  "(" expression ")"
+  } else if (symbol == SYM_LPARENTHESIS) {
+    getSymbol();
+
+>>>>>>> upstream/selfie-master
     type = gr_expression();
 
     if (symbol == SYM_RPARENTHESIS)
       getSymbol();
     else
       syntaxErrorSymbol(SYM_RPARENTHESIS);
+<<<<<<< HEAD
     }
     else
     syntaxErrorUnexpected();
@@ -3115,9 +3624,37 @@ int gr_shiftExpression() {
 
     while(isLeftShiftOrRightShift()) {
         operatorSymbol = symbol;
+=======
+  } else
+    syntaxErrorUnexpected();
 
-        getSymbol();
+  // assert: allocatedTemporaries == n + 1
 
+  if (hasCast)
+    return cast;
+  else
+    return type;
+}
+
+int gr_term() {
+  int ltype;
+  int operatorSymbol;
+  int rtype;
+
+  // assert: n = allocatedTemporaries
+
+  ltype = gr_factor();
+
+  // assert: allocatedTemporaries == n + 1
+
+  // * / or % ?
+  while (isStarOrDivOrModulo()) {
+    operatorSymbol = symbol;
+>>>>>>> upstream/selfie-master
+
+    getSymbol();
+
+<<<<<<< HEAD
         rtype = gr_simpleExpression();
 
         if (ltype != rtype)
@@ -3136,6 +3673,33 @@ int gr_shiftExpression() {
 
 
 
+=======
+    rtype = gr_factor();
+
+    // assert: allocatedTemporaries == n + 2
+
+    if (ltype != rtype)
+      typeWarning(ltype, rtype);
+
+    if (operatorSymbol == SYM_ASTERISK) {
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_MULTU);
+      emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFLO);
+
+    } else if (operatorSymbol == SYM_DIV) {
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_DIVU);
+      emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFLO);
+
+    } else if (operatorSymbol == SYM_MOD) {
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_DIVU);
+      emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFHI);
+    }
+
+    tfree(1);
+  }
+
+  // assert: allocatedTemporaries == n + 1
+
+>>>>>>> upstream/selfie-master
   return ltype;
 }
 
@@ -3165,12 +3729,21 @@ int gr_simpleExpression() {
       // even though 0-INT_MIN == INT_MIN
       sign = 0;
     }
+<<<<<<< HEAD
     }
     else
     sign = 0;
 
 
     ltype = gr_term();
+=======
+  } else
+    sign = 0;
+
+  ltype = gr_term();
+
+  // assert: allocatedTemporaries == n + 1
+>>>>>>> upstream/selfie-master
 
   if (sign) {
     if (ltype != INT_T) {
@@ -3179,7 +3752,11 @@ int gr_simpleExpression() {
       ltype = INT_T;
     }
 
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, REG_ZR, currentTemporary(), currentTemporary(), 0, FCT_SUBU);
+=======
+    emitRFormat(OP_SPECIAL, REG_ZR, currentTemporary(), currentTemporary(), FCT_SUBU);
+>>>>>>> upstream/selfie-master
   }
 
   // + or -?
@@ -3200,20 +3777,34 @@ int gr_simpleExpression() {
       } else if (rtype == INTSTAR_T)
         typeWarning(ltype, rtype);
 
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_ADDU);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_ADDU);
+>>>>>>> upstream/selfie-master
 
     } else if (operatorSymbol == SYM_MINUS) {
       if (ltype != rtype)
         typeWarning(ltype, rtype);
 
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_SUBU);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SUBU);
+>>>>>>> upstream/selfie-master
     }
 
     tfree(1);
   }
+<<<<<<< HEAD
 
   // assert: allocatedTemporaries == n + 1
 
+=======
+
+  // assert: allocatedTemporaries == n + 1
+
+>>>>>>> upstream/selfie-master
   return ltype;
 }
 
@@ -3224,7 +3815,11 @@ int gr_expression() {
 
   // assert: n = allocatedTemporaries
 
+<<<<<<< HEAD
     ltype = gr_shiftExpression();
+=======
+  ltype = gr_simpleExpression();
+>>>>>>> upstream/selfie-master
 
   // assert: allocatedTemporaries == n + 1
 
@@ -3234,7 +3829,11 @@ int gr_expression() {
 
     getSymbol();
 
+<<<<<<< HEAD
         rtype = gr_shiftExpression();
+=======
+    rtype = gr_simpleExpression();
+>>>>>>> upstream/selfie-master
 
     // assert: allocatedTemporaries == n + 2
 
@@ -3243,7 +3842,11 @@ int gr_expression() {
 
     if (operatorSymbol == SYM_EQUALITY) {
       // subtract, if result = 0 then 1, else 0
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_SUBU);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SUBU);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
@@ -3254,7 +3857,11 @@ int gr_expression() {
 
     } else if (operatorSymbol == SYM_NOTEQ) {
       // subtract, if result = 0 then 0, else 1
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_SUBU);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SUBU);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
@@ -3265,19 +3872,31 @@ int gr_expression() {
 
     } else if (operatorSymbol == SYM_LT) {
       // set to 1 if a < b, else 0
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_SLT);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SLT);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
     } else if (operatorSymbol == SYM_GT) {
       // set to 1 if b < a, else 0
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLT);
+=======
+      emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), FCT_SLT);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
     } else if (operatorSymbol == SYM_LEQ) {
       // if b < a set 0, else 1
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLT);
+=======
+      emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), FCT_SLT);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
@@ -3288,7 +3907,11 @@ int gr_expression() {
 
     } else if (operatorSymbol == SYM_GEQ) {
       // if a < b set 0, else 1
+<<<<<<< HEAD
             emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), 0, FCT_SLT);
+=======
+      emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SLT);
+>>>>>>> upstream/selfie-master
 
       tfree(1);
 
@@ -3298,9 +3921,15 @@ int gr_expression() {
       emitIFormat(OP_ADDIU, REG_ZR, currentTemporary(), 0);
     }
   }
+<<<<<<< HEAD
 
   // assert: allocatedTemporaries == n + 1
 
+=======
+
+  // assert: allocatedTemporaries == n + 1
+
+>>>>>>> upstream/selfie-master
   return ltype;
 }
 
@@ -3372,6 +4001,7 @@ void gr_while() {
 void gr_if() {
   int brForwardToElseOrEnd;
   int brForwardToEnd;
+<<<<<<< HEAD
 
   // assert: allocatedTemporaries == 0
 
@@ -3439,6 +4069,75 @@ void gr_if() {
               exit(-1);
             }
 
+=======
+
+  // assert: allocatedTemporaries == 0
+
+  // if ( expression )
+  if (symbol == SYM_IF) {
+    getSymbol();
+
+    if (symbol == SYM_LPARENTHESIS) {
+      getSymbol();
+
+      gr_expression();
+
+      // if the "if" case is not true, we jump to "else" (if provided)
+      brForwardToElseOrEnd = binaryLength;
+
+      emitIFormat(OP_BEQ, REG_ZR, currentTemporary(), 0);
+
+      tfree(1);
+
+      if (symbol == SYM_RPARENTHESIS) {
+        getSymbol();
+
+        // zero or more statements: { statement }
+        if (symbol == SYM_LBRACE) {
+          getSymbol();
+
+          while (isNotRbraceOrEOF())
+            gr_statement();
+
+          if (symbol == SYM_RBRACE)
+            getSymbol();
+          else {
+            syntaxErrorSymbol(SYM_RBRACE);
+
+            exit(-1);
+          }
+        }
+        // only one statement without {}
+        else
+          gr_statement();
+
+        //optional: else
+        if (symbol == SYM_ELSE) {
+          getSymbol();
+
+          // if the "if" case was true, we jump to the end
+          brForwardToEnd = binaryLength;
+          emitIFormat(OP_BEQ, REG_ZR, REG_ZR, 0);
+
+          // if the "if" case was not true, we jump here
+          fixup_relative(brForwardToElseOrEnd);
+
+          // zero or more statements: { statement }
+          if (symbol == SYM_LBRACE) {
+            getSymbol();
+
+            while (isNotRbraceOrEOF())
+              gr_statement();
+
+            if (symbol == SYM_RBRACE)
+              getSymbol();
+            else {
+              syntaxErrorSymbol(SYM_RBRACE);
+
+              exit(-1);
+            }
+
+>>>>>>> upstream/selfie-master
           // only one statement without {}
           } else
             gr_statement();
@@ -3478,11 +4177,19 @@ void gr_return(int returnType) {
       typeWarning(returnType, type);
 
     // save value of expression in return register
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, REG_ZR, currentTemporary(), REG_V0, 0, FCT_ADDU);
 
     tfree(1);
   }
 
+=======
+    emitRFormat(OP_SPECIAL, REG_ZR, currentTemporary(), REG_V0, FCT_ADDU);
+
+    tfree(1);
+  }
+
+>>>>>>> upstream/selfie-master
   // unconditional branch to procedure epilogue
   // maintain fixup chain for later fixup
   emitJFormat(OP_J, returnBranches / WORDSIZE);
@@ -3504,6 +4211,7 @@ void gr_statement() {
 
   while (lookForStatement()) {
     syntaxErrorUnexpected();
+<<<<<<< HEAD
 
     if (symbol == SYM_EOF)
       exit(-1);
@@ -3511,6 +4219,15 @@ void gr_statement() {
       getSymbol();
   }
 
+=======
+
+    if (symbol == SYM_EOF)
+      exit(-1);
+    else
+      getSymbol();
+  }
+
+>>>>>>> upstream/selfie-master
   // ["*"]
   if (symbol == SYM_ASTERISK) {
     getSymbol();
@@ -3954,8 +4671,13 @@ void emitLeftShiftBy(int b) {
 
   // load multiplication factor less than 2^15 to avoid sign extension
   emitIFormat(OP_ADDIU, REG_ZR, nextTemporary(), twoToThePowerOf(b));
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, currentTemporary(), nextTemporary(), 0, 0, FCT_MULTU);
     emitRFormat(OP_SPECIAL, 0, 0, currentTemporary(), 0, FCT_MFLO);
+=======
+  emitRFormat(OP_SPECIAL, currentTemporary(), nextTemporary(), 0, FCT_MULTU);
+  emitRFormat(OP_SPECIAL, 0, 0, currentTemporary(), FCT_MFLO);
+>>>>>>> upstream/selfie-master
 }
 
 void emitMainEntry() {
@@ -3974,7 +4696,11 @@ void emitMainEntry() {
   // since we load positive integers < 2^28 which take
   // no more than 8 instructions each, see load_integer
   while (i < 16) {
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL);
+=======
+    emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP);
+>>>>>>> upstream/selfie-master
 
     i = i + 1;
   }
@@ -4122,18 +4848,30 @@ void printRegister(int reg) {
 // 32 bit
 //
 // +------+-----+-----+-----+-----+------+
+<<<<<<< HEAD
 // |opcode|  rs |  rt |  rd |shamt|fction|
 // +------+-----+-----+-----+-----+------+
 //    6      5     5     5     5     6
 int encodeRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
+=======
+// |opcode| rs  | rt  | rd  |00000|fction|
+// +------+-----+-----+-----+-----+------+
+//    6      5     5     5     5     6
+int encodeRFormat(int opcode, int rs, int rt, int rd, int function) {
+>>>>>>> upstream/selfie-master
   // assert: 0 <= opcode < 2^6
   // assert: 0 <= rs < 2^5
   // assert: 0 <= rt < 2^5
   // assert: 0 <= rd < 2^5
+<<<<<<< HEAD
     // assert: 0 <= shamt < 2^5
   // assert: 0 <= function < 2^6
 
     return leftShift(leftShift(leftShift(leftShift(leftShift(opcode, 5) + rs, 5) + rt, 5) + rd, 5) + shamt, 6) + function;
+=======
+  // assert: 0 <= function < 2^6
+  return leftShift(leftShift(leftShift(leftShift(opcode, 5) + rs, 5) + rt, 5) + rd, 11) + function;
+>>>>>>> upstream/selfie-master
 }
 
 // -----------------------------------------------------------------
@@ -4202,10 +4940,13 @@ int signExtend(int immediate) {
     return immediate;
   else
     return immediate - twoToThePowerOf(16);
+<<<<<<< HEAD
 }
 
 int getShamt(int instruction) {
     return rightShift((instruction << 21), 27);
+=======
+>>>>>>> upstream/selfie-master
 }
 
 // -----------------------------------------------------------------
@@ -4237,14 +4978,22 @@ void decode() {
 // 32 bit
 //
 // +------+-----+-----+-----+-----+------+
+<<<<<<< HEAD
 // |opcode|  rs |  rt |  rd |shamt|fction|
+=======
+// |opcode| rs  | rt  | rd  |00000|fction|
+>>>>>>> upstream/selfie-master
 // +------+-----+-----+-----+-----+------+
 //    6      5     5     5     5     6
 void decodeRFormat() {
   rs          = getRS(ir);
   rt          = getRT(ir);
   rd          = getRD(ir);
+<<<<<<< HEAD
     immediate   = getShamt(ir);
+=======
+  immediate   = 0;
+>>>>>>> upstream/selfie-master
   function    = getFunction(ir);
   instr_index = 0;
 }
@@ -4312,6 +5061,7 @@ void emitInstruction(int instruction) {
   }
 }
 
+<<<<<<< HEAD
 void emitRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
     emitInstruction(encodeRFormat(opcode, rs, rt, rd, shamt, function));
 
@@ -4326,6 +5076,22 @@ void emitRFormat(int opcode, int rs, int rt, int rd, int shamt, int function) {
     } else if (function == FCT_MFHI) {
             emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // pipeline delay
             emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // pipeline delay
+=======
+void emitRFormat(int opcode, int rs, int rt, int rd, int function) {
+  emitInstruction(encodeRFormat(opcode, rs, rt, rd, function));
+
+  if (opcode == OP_SPECIAL) {
+    if (function == FCT_JR)
+      emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // delay slot
+    else if (function == FCT_MFLO) {
+      // In MIPS I-III two instructions after MFLO/MFHI
+      // must not modify the LO/HI registers
+      emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // pipeline delay
+      emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // pipeline delay
+    } else if (function == FCT_MFHI) {
+      emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // pipeline delay
+      emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // pipeline delay
+>>>>>>> upstream/selfie-master
     }
   }
 }
@@ -4334,15 +5100,25 @@ void emitIFormat(int opcode, int rs, int rt, int immediate) {
   emitInstruction(encodeIFormat(opcode, rs, rt, immediate));
 
   if (opcode == OP_BEQ)
+<<<<<<< HEAD
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
   else if (opcode == OP_BNE)
         emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
+=======
+    emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // delay slot
+  else if (opcode == OP_BNE)
+    emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // delay slot
+>>>>>>> upstream/selfie-master
 }
 
 void emitJFormat(int opcode, int instr_index) {
   emitInstruction(encodeJFormat(opcode, instr_index));
 
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SLL); // delay slot
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_NOP); // delay slot
+>>>>>>> upstream/selfie-master
 }
 
 void fixup_relative(int fromAddress) {
@@ -4558,7 +5334,11 @@ void emitExit() {
 
   // load the correct syscall number and invoke syscall
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_EXIT);
+<<<<<<< HEAD
     emitRFormat(0, 0, 0, 0, 0, FCT_SYSCALL);
+=======
+  emitRFormat(0, 0, 0, 0, FCT_SYSCALL);
+>>>>>>> upstream/selfie-master
 
   // never returns here
 }
@@ -4595,10 +5375,17 @@ void emitRead() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_READ);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
   // jump back to caller, return value is in REG_V0
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  // jump back to caller, return value is in REG_V0
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void implementRead() {
@@ -4712,9 +5499,15 @@ void emitWrite() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_WRITE);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void implementWrite() {
@@ -4828,9 +5621,15 @@ void emitOpen() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_OPEN);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 int down_loadString(int* table, int vaddr, int* s) {
@@ -4928,9 +5727,15 @@ void emitMalloc() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_MALLOC);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void implementMalloc() {
@@ -4975,9 +5780,15 @@ void emitID() {
   createSymbolTableEntry(LIBRARY_TABLE, (int*) "hypster_ID", 0, PROCEDURE, INT_T, 0, binaryLength);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_ID);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void implementID() {
@@ -5001,9 +5812,15 @@ void emitCreate() {
   createSymbolTableEntry(LIBRARY_TABLE, (int*) "hypster_create", 0, PROCEDURE, INT_T, 0, binaryLength);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_CREATE);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 int doCreate(int parentID) {
@@ -5056,12 +5873,21 @@ void emitSwitch() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_SWITCH);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
   // save ID of context from which we are switching here in return register
     emitRFormat(OP_SPECIAL, REG_ZR, REG_V1, REG_V0, 0, FCT_ADDU);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  // save ID of context from which we are switching here in return register
+  emitRFormat(OP_SPECIAL, REG_ZR, REG_V1, REG_V0, FCT_ADDU);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 int doSwitch(int toID) {
@@ -5134,9 +5960,15 @@ void emitStatus() {
   createSymbolTableEntry(LIBRARY_TABLE, (int*) "hypster_status", 0, PROCEDURE, INT_T, 0, binaryLength);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_STATUS);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 int doStatus() {
@@ -5180,9 +6012,15 @@ void emitDelete() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_DELETE);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void doDelete(int ID) {
@@ -5238,9 +6076,15 @@ void emitMap() {
   emitIFormat(OP_ADDIU, REG_SP, REG_SP, WORDSIZE);
 
   emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_MAP);
+<<<<<<< HEAD
     emitRFormat(OP_SPECIAL, 0, 0, 0, 0, FCT_SYSCALL);
 
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, 0, FCT_JR);
+=======
+  emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+
+  emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+>>>>>>> upstream/selfie-master
 }
 
 void doMap(int ID, int page, int frame) {
@@ -5265,6 +6109,7 @@ void doMap(int ID, int page, int frame) {
         print((int*) " not found");
         println();
       }
+<<<<<<< HEAD
     }
 
     // on boot level zero frame may be any signed integer
@@ -5280,6 +6125,23 @@ void doMap(int ID, int page, int frame) {
       print(itoa(ID, string_buffer, 10, 0, 0));
       println();
     }
+=======
+    }
+
+    // on boot level zero frame may be any signed integer
+    mapPage(getPT(mapContext), page, frame);
+
+    if (debug_map) {
+      print(binaryName);
+      print((int*) ": selfie_map page ");
+      print(itoa(page, string_buffer, 16, 4, 0));
+      print((int*) " to frame ");
+      print(itoa(frame, string_buffer, 16, 8, 0));
+      print((int*) " for context ");
+      print(itoa(ID, string_buffer, 10, 0, 0));
+      println();
+    }
+>>>>>>> upstream/selfie-master
   } else if (debug_map) {
     print(binaryName);
     print((int*) ": selfie_map context ");
@@ -5398,10 +6260,17 @@ void storeVirtualMemory(int* table, int vaddr, int data) {
 
 void mapAndStoreVirtualMemory(int* table, int vaddr, int data) {
   // assert: isValidVirtualAddress(vaddr) == 1
+<<<<<<< HEAD
 
   if (isVirtualAddressMapped(table, vaddr) == 0)
     mapPage(table, vaddr / PAGESIZE, (int) palloc());
 
+=======
+
+  if (isVirtualAddressMapped(table, vaddr) == 0)
+    mapPage(table, vaddr / PAGESIZE, (int) palloc());
+
+>>>>>>> upstream/selfie-master
   storeVirtualMemory(table, vaddr, data);
 }
 
@@ -5791,6 +6660,7 @@ void fct_divu() {
     printRegister(rs);
     print((int*) ",");
     printRegister(rt);
+<<<<<<< HEAD
     if (interpret) {
       print((int*) ": ");
       printRegister(rs);
@@ -5840,6 +6710,10 @@ void fct_addu() {
       print((int*) "=");
       print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
       print((int*) ",");
+=======
+    if (interpret) {
+      print((int*) ": ");
+>>>>>>> upstream/selfie-master
       printRegister(rs);
       print((int*) "=");
       print(itoa(*(registers+rs), string_buffer, 10, 0, 0));
@@ -5847,17 +6721,30 @@ void fct_addu() {
       printRegister(rt);
       print((int*) "=");
       print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
+<<<<<<< HEAD
+=======
+      print((int*) ",$lo=");
+      print(itoa(reg_lo, string_buffer, 10, 0, 0));
+      print((int*) ",$hi=");
+      print(itoa(reg_hi, string_buffer, 10, 0, 0));
+>>>>>>> upstream/selfie-master
     }
   }
 
   if (interpret) {
+<<<<<<< HEAD
     *(registers+rd) = *(registers+rs) + *(registers+rt);
+=======
+    reg_lo = *(registers+rs) / *(registers+rt);
+    reg_hi = *(registers+rs) % *(registers+rt);
+>>>>>>> upstream/selfie-master
 
     pc = pc + WORDSIZE;
   }
 
   if (debug) {
     if (interpret) {
+<<<<<<< HEAD
       print((int*) " -> ");
       printRegister(rd);
       print((int*) "=");
@@ -5904,11 +6791,18 @@ void fct_subu() {
       printRegister(rd);
       print((int*) "=");
       print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+=======
+      print((int*) " -> $lo=");
+      print(itoa(reg_lo, string_buffer, 10, 0, 0));
+      print((int*) ",$hi=");
+      print(itoa(reg_hi, string_buffer, 10, 0, 0));
+>>>>>>> upstream/selfie-master
     }
     println();
   }
 }
 
+<<<<<<< HEAD
 void fct_sllv() {
     if(debug) {
         printFunction(function);
@@ -5946,9 +6840,51 @@ void fct_sllv() {
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
         }
         println();
+=======
+void fct_addu() {
+  if (debug) {
+    printFunction(function);
+    print((int*) " ");
+    printRegister(rd);
+    print((int*) ",");
+    printRegister(rs);
+    print((int*) ",");
+    printRegister(rt);
+    if (interpret) {
+      print((int*) ": ");
+      printRegister(rd);
+      print((int*) "=");
+      print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rs);
+      print((int*) "=");
+      print(itoa(*(registers+rs), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rt);
+      print((int*) "=");
+      print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
     }
+  }
+
+  if (interpret) {
+    *(registers+rd) = *(registers+rs) + *(registers+rt);
+
+    pc = pc + WORDSIZE;
+  }
+
+  if (debug) {
+    if (interpret) {
+      print((int*) " -> ");
+      printRegister(rd);
+      print((int*) "=");
+      print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+>>>>>>> upstream/selfie-master
+    }
+    println();
+  }
 }
 
+<<<<<<< HEAD
 void fct_srlv() {
     if(debug) {
         printFunction(function);
@@ -5985,9 +6921,51 @@ void fct_srlv() {
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
         }
         println();
+=======
+void fct_subu() {
+  if (debug) {
+    printFunction(function);
+    print((int*) " ");
+    printRegister(rd);
+    print((int*) ",");
+    printRegister(rs);
+    print((int*) ",");
+    printRegister(rt);
+    if (interpret) {
+      print((int*) ": ");
+      printRegister(rd);
+      print((int*) "=");
+      print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rs);
+      print((int*) "=");
+      print(itoa(*(registers+rs), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rt);
+      print((int*) "=");
+      print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
     }
+  }
+
+  if (interpret) {
+    *(registers+rd) = *(registers+rs) - *(registers+rt);
+
+    pc = pc + WORDSIZE;
+  }
+
+  if (debug) {
+    if (interpret) {
+      print((int*) " -> ");
+      printRegister(rd);
+      print((int*) "=");
+      print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+>>>>>>> upstream/selfie-master
+    }
+    println();
+  }
 }
 
+<<<<<<< HEAD
 void fct_sll() {
     if (immediate > 0) {
         if (debug) {
@@ -6032,9 +7010,66 @@ void fct_sll() {
         }
         if (interpret)
             pc = pc + WORDSIZE;
+=======
+void op_lw() {
+  int vaddr;
+
+  if (debug) {
+    printOpcode(opcode);
+    print((int*) " ");
+    printRegister(rt);
+    print((int*) ",");
+    print(itoa(signExtend(immediate), string_buffer, 10, 0, 0));
+    print((int*) "(");
+    printRegister(rs);
+    print((int*) ")");
+    if (interpret) {
+      print((int*) ": ");
+      printRegister(rt);
+      print((int*) "=");
+      print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rs);
+      print((int*) "=");
+      print(itoa(*(registers+rs), string_buffer, 16, 0, 0));
     }
+  }
+
+  if (interpret) {
+    vaddr = *(registers+rs) + signExtend(immediate);
+
+    if (isValidVirtualAddress(vaddr)) {
+      if (isVirtualAddressMapped(pt, vaddr)) {
+        *(registers+rt) = loadVirtualMemory(pt, vaddr);
+
+        // keep track of number of loads
+        loads = loads + 1;
+
+        *(loadsPerAddress + pc / WORDSIZE) = *(loadsPerAddress + pc / WORDSIZE) + 1;
+
+        pc = pc + WORDSIZE;
+      } else
+        throwException(EXCEPTION_PAGEFAULT, vaddr);
+    } else
+      throwException(EXCEPTION_ADDRESSERROR, vaddr);
+  }
+
+  if (debug) {
+    if (interpret) {
+      print((int*) " -> ");
+      printRegister(rt);
+      print((int*) "=");
+      print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
+      print((int*) "=memory[");
+      print(itoa(vaddr, string_buffer, 16, 0, 0));
+      print((int*) "]");
+>>>>>>> upstream/selfie-master
+    }
+    println();
+  }
 }
 
+<<<<<<< HEAD
 
 void fct_srl() {
     if (debug) {
@@ -6069,10 +7104,54 @@ void fct_srl() {
             print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
         }
         println();
+=======
+void fct_slt() {
+  if (debug) {
+    printFunction(function);
+    print((int*) " ");
+    printRegister(rd);
+    print((int*) ",");
+    printRegister(rs);
+    print((int*) ",");
+    printRegister(rt);
+    if (interpret) {
+      print((int*) ": ");
+      printRegister(rs);
+      print((int*) "=");
+      print(itoa(*(registers+rs), string_buffer, 10, 0, 0));
+      print((int*) ",");
+      printRegister(rt);
+      print((int*) "=");
+      print(itoa(*(registers+rt), string_buffer, 10, 0, 0));
     }
+  }
+
+  if (interpret) {
+    if (*(registers+rs) < *(registers+rt))
+      *(registers+rd) = 1;
+    else
+      *(registers+rd) = 0;
+
+    pc = pc + WORDSIZE;
+  }
+
+  if (debug) {
+    if (interpret) {
+      print((int*) " -> ");
+      printRegister(rd);
+      print((int*) "=");
+      print(itoa(*(registers+rd), string_buffer, 10, 0, 0));
+>>>>>>> upstream/selfie-master
+    }
+    println();
+  }
 }
 
+<<<<<<< HEAD
 void op_lw() {
+=======
+void op_sw() {
+>>>>>>> upstream/selfie-master
   int vaddr;
 
   if (debug) {
@@ -6095,6 +7174,7 @@ void op_lw() {
       print(itoa(*(registers+rs), string_buffer, 16, 0, 0));
     }
   }
+<<<<<<< HEAD
 
   if (interpret) {
     vaddr = *(registers+rs) + signExtend(immediate);
@@ -6213,6 +7293,28 @@ void op_sw() {
       throwException(EXCEPTION_ADDRESSERROR, vaddr);
   }
 
+=======
+
+  if (interpret) {
+    vaddr = *(registers+rs) + signExtend(immediate);
+
+    if (isValidVirtualAddress(vaddr)) {
+      if (isVirtualAddressMapped(pt, vaddr)) {
+        storeVirtualMemory(pt, vaddr, *(registers+rt));
+
+        // keep track of number of stores
+        stores = stores + 1;
+
+        *(storesPerAddress + pc / WORDSIZE) = *(storesPerAddress + pc / WORDSIZE) + 1;
+
+        pc = pc + WORDSIZE;
+      } else
+        throwException(EXCEPTION_PAGEFAULT, vaddr);
+    } else
+      throwException(EXCEPTION_ADDRESSERROR, vaddr);
+  }
+
+>>>>>>> upstream/selfie-master
   if (debug) {
     if (interpret) {
       print((int*) " -> memory[");
@@ -6313,6 +7415,7 @@ void execute() {
   }
 
   if (opcode == OP_SPECIAL) {
+<<<<<<< HEAD
         //if (function == FCT_NOP)
         //    fct_nop();
         if(function == FCT_SLL)
@@ -6323,6 +7426,10 @@ void execute() {
             fct_srl();
         else if(function == FCT_SRLV)
             fct_srlv();
+=======
+    if (function == FCT_NOP)
+      fct_nop();
+>>>>>>> upstream/selfie-master
     else if (function == FCT_ADDU)
       fct_addu();
     else if (function == FCT_SUBU)
@@ -6671,6 +7778,7 @@ void selfie_run(int argc, int* argv) {
   print(itoa(frameMemorySize / 1024 / 1024, string_buffer, 10, 0, 0));
   print((int*) "MB of memory");
   println();
+<<<<<<< HEAD
 
   interpret = 1;
 
@@ -6685,6 +7793,22 @@ void selfie_run(int argc, int* argv) {
   print(binaryName);
   println();
 
+=======
+
+  interpret = 1;
+
+  boot(argc, argv);
+
+  interpret = 0;
+
+  print(selfieName);
+  print((int*) ": this is selfie's ");
+  if (mipster) print((int*) "mipster"); else print((int*) "hypster");
+  print((int*) " terminating ");
+  print(binaryName);
+  println();
+
+>>>>>>> upstream/selfie-master
   if (mipster) {
     print(selfieName);
     print((int*) ": profile: total,max(ratio%)@addr(line#),2max(ratio%)@addr(line#),3max(ratio%)@addr(line#)");
@@ -6715,6 +7839,7 @@ int* allocateContext(int ID, int parentID) {
 
     freeContexts = getNextContext(freeContexts);
   }
+<<<<<<< HEAD
 
   setNextContext(context, (int*) 0);
   setPrevContext(context, (int*) 0);
@@ -6739,11 +7864,38 @@ int* allocateContext(int ID, int parentID) {
 
   setParent(context, parentID);
 
+=======
+
+  setNextContext(context, (int*) 0);
+  setPrevContext(context, (int*) 0);
+
+  setID(context, ID);
+
+  setPC(context, 0);
+
+  // allocate memory for general purpose registers
+  // TODO: reuse memory
+  setRegs(context, malloc(NUMBEROFREGISTERS * WORDSIZE));
+
+  setRegHi(context, 0);
+  setRegLo(context, 0);
+
+  // allocate memory for page table
+  // TODO: save and reuse memory for page table
+  setPT(context, malloc(VIRTUALMEMORYSIZE / PAGESIZE * WORDSIZE));
+
+  // heap starts where it is safe to start
+  setBreak(context, maxBinaryLength);
+
+  setParent(context, parentID);
+
+>>>>>>> upstream/selfie-master
   return context;
 }
 
 int* createContext(int ID, int parentID, int* in) {
   int* context;
+<<<<<<< HEAD
 
   context = allocateContext(ID, parentID);
 
@@ -6752,6 +7904,16 @@ int* createContext(int ID, int parentID, int* in) {
   if (in != (int*) 0)
     setPrevContext(in, context);
 
+=======
+
+  context = allocateContext(ID, parentID);
+
+  setNextContext(context, in);
+
+  if (in != (int*) 0)
+    setPrevContext(in, context);
+
+>>>>>>> upstream/selfie-master
   return context;
 }
 
@@ -6960,6 +8122,7 @@ int selfie(int argc, int* argv) {
         selfie_load();
       } else if (stringCompare((int*) *argv, (int*) "-m")) {
         initMemory(atoi((int*) *(argv+1)) * MEGABYTE);
+<<<<<<< HEAD
 
         argc = argc - 1;
         argv = argv + 1;
@@ -7020,6 +8183,22 @@ int selfie(int argc, int* argv) {
         if (binaryLength > 0)
           selfie_run(argc, argv);
         else {
+=======
+
+        argc = argc - 1;
+        argv = argv + 1;
+
+        // pass binaryName as first argument replacing size
+        *argv = (int) binaryName;
+
+        if (binaryLength > 0) {
+          mipster = 1;
+
+          selfie_run(argc, argv);
+
+          mipster = 0;
+        } else {
+>>>>>>> upstream/selfie-master
           print(selfieName);
           print((int*) ": nothing to run");
           println();
@@ -7028,6 +8207,55 @@ int selfie(int argc, int* argv) {
         }
 
         return 0;
+<<<<<<< HEAD
+=======
+      } else if (stringCompare((int*) *argv, (int*) "-d")) {
+        initMemory(atoi((int*) *(argv+1)) * MEGABYTE);
+
+        argc = argc - 1;
+        argv = argv + 1;
+
+        // pass binaryName as first argument replacing size
+        *argv = (int) binaryName;
+
+        if (binaryLength > 0) {
+          mipster = 1;
+          debug   = 1;
+
+          selfie_run(argc, argv);
+
+          mipster = 0;
+          debug   = 0;
+        } else {
+          print(selfieName);
+          print((int*) ": nothing to debug");
+          println();
+
+          exit(-1);
+        }
+
+        return 0;
+      } else if (stringCompare((int*) *argv, (int*) "-y")) {
+        initMemory(atoi((int*) *(argv+1)) * MEGABYTE);
+
+        argc = argc - 1;
+        argv = argv + 1;
+
+        // pass binaryName as first argument replacing size
+        *argv = (int) binaryName;
+
+        if (binaryLength > 0)
+          selfie_run(argc, argv);
+        else {
+          print(selfieName);
+          print((int*) ": nothing to run");
+          println();
+
+          exit(-1);
+        }
+
+        return 0;
+>>>>>>> upstream/selfie-master
       } else
         return -1;
     }
@@ -7037,10 +8265,13 @@ int selfie(int argc, int* argv) {
 }
 
 int main(int argc, int* argv) {
+<<<<<<< HEAD
     int a;
     int b;
     int c;
 
+=======
+>>>>>>> upstream/selfie-master
   initLibrary();
 
   initScanner();
@@ -7054,14 +8285,19 @@ int main(int argc, int* argv) {
 
   argc = argc - 1;
   argv = argv + 1;
+<<<<<<< HEAD
     print((int*) "This is Oohoo3ic Selfie");
     println();
+=======
+
+>>>>>>> upstream/selfie-master
   if (selfie(argc, (int*) argv) != 0) {
     print(selfieName);
     print((int*) ": usage: selfie { -c source | -o binary | -s assembly | -l binary } [ -m size ... | -d size ... | -y size ... ] ");
     println();
   }
 
+<<<<<<< HEAD
     printSymbol(SYM_LBRACKET);
     printSymbol(SYM_RBRACKET);
     //Test Ca[ses
@@ -7139,3 +8375,7 @@ int main(int argc, int* argv) {
     print((int*)"End of Main");println();
   return 0;
 }
+=======
+  return 0;
+}
+>>>>>>> upstream/selfie-master
