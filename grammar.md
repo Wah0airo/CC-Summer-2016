@@ -58,9 +58,8 @@ return           = "return" [ expression ] .
 
 statement        = ( [ "*" ] identifier | "*" "(" expression ")" ) "="
                       expression ";" |
-                    identifier "[" integer "]" "=" expression
+                    identifier "[" integer "]" "=" expression | array
                     call ";" | 
-                    ###array ";" |
                     while | 
                     if | 
                     return ";" .
@@ -71,7 +70,7 @@ procedure        = "(" [ variable { "," variable } ] ")"
                     ( ";" | "{" { variable ";" } { array ";"}{ statement } "}" ) .
 
 cstar            = { type identifier [ "=" [ cast ] [ "-" ] literal ] ";" |
-                   ( "void" | type ) identifier procedure } .
+                   ( "void" | type ) identifier array procedure } .
 
 INT_T
 ```
