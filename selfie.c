@@ -521,10 +521,9 @@ void help_procedure_epilogue(int parameters);
 void declare_array(int* id, int typ, int off, int whichTable);
 void read_write_array(int* name);
 int gr_call(int* procedure);
-int gr_factor();
-
-int gr_term();
-int gr_simpleExpression();
+int gr_factor(int *list);
+int gr_term(int* list);
+int gr_simpleExpression(int* list);
 int gr_shiftExpression();
 int gr_expression();
 void gr_while();
@@ -550,6 +549,8 @@ int* currentProcedureName = (int*) 0;     // name of currently parsed procedure
 int isLiteralNumber = 0;     //boolean expression TODO docu
 
 int isOperation = 0;
+
+int isShift = 0;
 
 // -----------------------------------------------------------------
 // ---------------------- MACHINE CODE LIBRARY ---------------------
@@ -2781,34 +2782,34 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
             if(symbol == SYM_RBRACKET) {
                 getSymbol();
                 if(symbol == SYM_SEMICOLON) {
-                    print((int*) "Declare 1D Array ");
-                    printString(id);
-                    print((int*) " alloc_Memory: ");
-                    print(itoa(offset_loc, string_buffer, 10, 0, 0));
+                    //print((int*) "Declare 1D Array ");
+                    //printString(id);
+                    //print((int*) " alloc_Memory: ");
+                    //print(itoa(offset_loc, string_buffer, 10, 0, 0));
                     
                     if(whichTable == GLOBAL_TABLE) {
                         offset_array = offset_loc + size_array;
                         //offset_array = 0 - offset_array;
-                        print((int*) " size_array: ");
-                        print(itoa(size_array, string_buffer, 10, 0, 0));
-                        print((int*) " offset_array: ");
-                        print(itoa(-offset_array, string_buffer, 10, 0, 0));
-                        print((int*) " which_table GL=1, LOC=2: ");
-                        print(itoa(whichTable, string_buffer, 10, 0, 0));
-                        printLineNumber((int*) " ln: ", lineNumber);
-                        println();
+                      //  print((int*) " size_array: ");
+                       // print(itoa(size_array, string_buffer, 10, 0, 0));
+                       // print((int*) " offset_array: ");
+                       // print(itoa(-offset_array, string_buffer, 10, 0, 0));
+                       // print((int*) " which_table GL=1, LOC=2: ");
+                       // print(itoa(whichTable, string_buffer, 10, 0, 0));
+                       // printLineNumber((int*) " ln: ", lineNumber);
+                       // println();
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, -offset_array, size_array);
                     }
                     else {
                         offset_array = offset_loc - size_array;
-                        print((int*) " size_array: ");
-                        print(itoa(size_array, string_buffer, 10, 0, 0));
-                        print((int*) " offset_array: ");
-                        print(itoa(offset_array, string_buffer, 10, 0, 0));
-                        print((int*) " which_table GL=1, LOC=2: ");
-                        print(itoa(whichTable, string_buffer, 10, 0, 0));
-                        printLineNumber((int*) " ln: ", lineNumber);
-                        println();
+                        //print((int*) " size_array: ");
+                        //print(itoa(size_array, string_buffer, 10, 0, 0));
+                        //print((int*) " offset_array: ");
+                        //print(itoa(offset_array, string_buffer, 10, 0, 0));
+                        //print((int*) " which_table GL=1, LOC=2: ");
+                        //print(itoa(whichTable, string_buffer, 10, 0, 0));
+                        //printLineNumber((int*) " ln: ", lineNumber);
+                        //println();
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array);
                     }
 
@@ -2823,34 +2824,34 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
                             if(symbol==SYM_RBRACKET) {
                                 getSymbol();
                                 if(symbol == SYM_SEMICOLON) {
-                                    print((int*) "Declare 2D Array ");
-                                    printString(id);
-                                    print((int*) " alloc_Memory: ");
-                                    print(itoa(offset_loc, string_buffer, 10, 0, 0));
+                                   // print((int*) "Declare 2D Array ");
+                                   // printString(id);
+                                   // print((int*) " alloc_Memory: ");
+                                   // print(itoa(offset_loc, string_buffer, 10, 0, 0));
                                     
                                     if(whichTable == GLOBAL_TABLE) {
                                         offset_array = offset_loc + size_array;
                                         //offset_array = 0 - offset_array;
-                                        print((int*) " size_array: ");
-                                        print(itoa(size_array, string_buffer, 10, 0, 0));
-                                        print((int*) " offset_array: ");
-                                        print(itoa(-offset_array, string_buffer, 10, 0, 0));
-                                        print((int*) " which_table GL=1, LOC=2: ");
-                                        print(itoa(whichTable, string_buffer, 10, 0, 0));
-                                        printLineNumber((int*) " ln: ", lineNumber);
-                                        println();
+                                      //  print((int*) " size_array: ");
+                                      //  print(itoa(size_array, string_buffer, 10, 0, 0));
+                                      //  print((int*) " offset_array: ");
+                                      //  print(itoa(-offset_array, string_buffer, 10, 0, 0));
+                                      //  print((int*) " which_table GL=1, LOC=2: ");
+                                     //   print(itoa(whichTable, string_buffer, 10, 0, 0));
+                                      //  printLineNumber((int*) " ln: ", lineNumber);
+                                      //  println();
                                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, -offset_array, size_array);
                                     }
                                     else {
                                         offset_array = offset_loc - size_array;
-                                        print((int*) " size_array: ");
-                                        print(itoa(size_array, string_buffer, 10, 0, 0));
-                                        print((int*) " offset_array: ");
-                                        print(itoa(offset_array, string_buffer, 10, 0, 0));
-                                        print((int*) " which_table GL=1, LOC=2: ");
-                                        print(itoa(whichTable, string_buffer, 10, 0, 0));
-                                        printLineNumber((int*) " ln: ", lineNumber);
-                                        println();
+                                     //   print((int*) " size_array: ");
+                                      //  print(itoa(size_array, string_buffer, 10, 0, 0));
+                                      //  print((int*) " offset_array: ");
+                                      //  print(itoa(offset_array, string_buffer, 10, 0, 0));
+                                     //   print((int*) " which_table GL=1, LOC=2: ");
+                                     //   print(itoa(whichTable, string_buffer, 10, 0, 0));
+                                     //   printLineNumber((int*) " ln: ", lineNumber);
+                                     //   println();
                                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array);
                                     }
                                     
@@ -2956,14 +2957,14 @@ void read_write_array(int* name) {
                 getSymbol();
                 if(symbol == SYM_INTEGER) {
                     load_integer(literal);
-                    index = index * 4;
-                    address_array = address_array + index;
-                    
-                    emitIFormat(OP_SW, getScope(array_name), currentTemporary(), address_array);
-                    tfree(1);
                     
                     getSymbol();
                     if(symbol == SYM_SEMICOLON) {
+                        index = index * 4;
+                        address_array = address_array + index;
+                        
+                        emitIFormat(OP_SW, getScope(array_name), currentTemporary(), address_array);
+                        tfree(1);
                         getSymbol();
                         //return 0;
                     }
@@ -3027,12 +3028,13 @@ void read_write_array(int* name) {
     
 }
 
-int gr_factor() {
+int gr_factor(int *list) {
     int hasCast;
     int cast;
     int type;
     
-    int *variableOrProcedureName;
+    int* variableOrProcedureName;
+    int temp_l;
     
     // assert: n = allocatedTemporaries
     
@@ -3041,8 +3043,6 @@ int gr_factor() {
     type = INT_T;
     
     while (lookForFactor()) {
-        print((int*) "gr_factor look for factor");
-        println();
         syntaxErrorUnexpected();
         
         if (symbol == SYM_EOF)
@@ -3053,6 +3053,7 @@ int gr_factor() {
     
     // optional cast: [ cast ]
     if (symbol == SYM_LPARENTHESIS) {
+        isLiteralNumber = 0;
         getSymbol();
         
         // cast: "(" "int" [ "*" ] ")"
@@ -3063,11 +3064,8 @@ int gr_factor() {
             
             if (symbol == SYM_RPARENTHESIS)
                 getSymbol();
-            else {
-                print((int*) "gr_factor cast");
-                println();
+            else
                 syntaxErrorSymbol(SYM_RPARENTHESIS);
-            }
             
             // not a cast: "(" expression ")"
         }
@@ -3076,11 +3074,8 @@ int gr_factor() {
             
             if (symbol == SYM_RPARENTHESIS)
                 getSymbol();
-            else {
-                print((int*) "gr_factor not a cast");
-                println();
+            else
                 syntaxErrorSymbol(SYM_RPARENTHESIS);
-            }
             
             // assert: allocatedTemporaries == n + 1
             
@@ -3090,6 +3085,7 @@ int gr_factor() {
     
     // dereference?
     if (symbol == SYM_ASTERISK) {
+        isLiteralNumber = 0;
         getSymbol();
         
         // ["*"] identifier
@@ -3106,17 +3102,10 @@ int gr_factor() {
             
             if (symbol == SYM_RPARENTHESIS)
                 getSymbol();
-            else {
-                print((int*) "gr_factor sES derreference");
-                println();
+            else
                 syntaxErrorSymbol(SYM_RPARENTHESIS);
-            }
-        }
-        else {
-            print((int*) "gr_factor *( expression");
-            println();
+        } else
             syntaxErrorUnexpected();
-        }
         
         if (type != INTSTAR_T)
             typeWarning(INTSTAR_T, type);
@@ -3129,38 +3118,75 @@ int gr_factor() {
         // identifier?
     }
     else if (symbol == SYM_IDENTIFIER) {
+        //print((int*) "factor Sym_identifier: ");
+        //println();
+        isLiteralNumber = 0;
         variableOrProcedureName = identifier;
         
         getSymbol();
         
         if (symbol == SYM_LPARENTHESIS) {
+            //print((int*) "factor Sym_identifier: LPARENTHESIS");
+            //println();
             getSymbol();
             
             // function call: identifier "(" ... ")"
             type = gr_call(variableOrProcedureName);
-            
             talloc();
-            // retrieve return value
             emitIFormat(OP_ADDIU, REG_V0, currentTemporary(), 0);
             
-            // reset return register
             emitIFormat(OP_ADDIU, REG_ZR, REG_V0, 0);
             
         }
-        else
-            // variable access: identifier
+        else {
             type = load_variable(variableOrProcedureName);
+        }
         
-        // integer?
-    } else if (symbol == SYM_INTEGER) {
-        load_integer(literal);
+    }
+    else if (symbol == SYM_INTEGER) {
+        temp_l = literal;
         
         getSymbol();
+        if(isStarOrDivOrModulo()) {
+            isLiteralNumber = 1;
+            setAttribute(list, temp_l);
+        }
+        else if(isOperation) {
+            if(isStarOrDivOrModulo()==0) {
+                isLiteralNumber = 1;
+                //*(list) = 1;
+                //*(list + 1) = temp_l;
+                *(list) = *(list + 1);
+                setAttribute(list, temp_l);
+            }
+        }
+        else if(isLeftShiftOrRightShift()) {
+            isLiteralNumber = 1;
+            setAttribute(list, temp_l);
+        }
+        else if(isShift) {
+            if(isLeftShiftOrRightShift()==0) {
+                isLiteralNumber = 1;
+                *(list) = *(list + 1);
+                setAttribute(list, temp_l);
+            }
+        }
+        else {
+            isLiteralNumber = 0;
+            load_integer(temp_l);
+            //print((int*) "no CF: ");
+            //printString(itoa(temp_l, string_buffer, 10, 0, 0));
+            //printLineNumber((int*) " ln:", lineNumber);
+        }
+        
+        //getSymbol();
         
         type = INT_T;
         
         // character?
-    } else if (symbol == SYM_CHARACTER) {
+    }
+    else if (symbol == SYM_CHARACTER) {
+        isLiteralNumber = 0;
         talloc();
         
         emitIFormat(OP_ADDIU, REG_ZR, currentTemporary(), literal);
@@ -3170,7 +3196,9 @@ int gr_factor() {
         type = INT_T;
         
         // string?
-    } else if (symbol == SYM_STRING) {
+    }
+    else if (symbol == SYM_STRING) {
+        isLiteralNumber = 0;
         load_string(string);
         
         getSymbol();
@@ -3180,23 +3208,18 @@ int gr_factor() {
         //  "(" expression ")"
     }
     else if (symbol == SYM_LPARENTHESIS) {
+        isLiteralNumber = 0;
         getSymbol();
         
         type = gr_expression();
         
         if (symbol == SYM_RPARENTHESIS)
             getSymbol();
-        else {
-            print((int*) "gr_factor sES (");
-            println();
+        else
             syntaxErrorSymbol(SYM_RPARENTHESIS);
-        }
     }
-    else {
-        print((int*) "gr_factor, != SYm_(");
-        println();
+    else
         syntaxErrorUnexpected();
-    }
     
     // assert: allocatedTemporaries == n + 1
     
@@ -3206,24 +3229,42 @@ int gr_factor() {
         return type;
 }
 
-int gr_term() {
+int gr_term(int* list) {
     int ltype;
     int operatorSymbol;
     int rtype;
-    
+    int left;
+    int right;
+    int result;
+    int irl;
+    int ill;
+    irl = 0;
+    ill = 0;
+    //attribute_list = malloc(8);
     // assert: n = allocatedTemporaries
     
-    ltype = gr_factor();
+    ltype = gr_factor(list);
+    
+    if(isLiteralNumber) {
+        left = getAttribute(list);
+        ill = 1;
+        //attribute_list = *(attribute_list + 1);
+    }
     
     // assert: allocatedTemporaries == n + 1
     
     // * / or % ?
     while (isStarOrDivOrModulo()) {
         operatorSymbol = symbol;
-        
+        isOperation = 1;
         getSymbol();
         
-        rtype = gr_factor();
+        rtype = gr_factor(list);
+        
+        if(isLiteralNumber) {
+            right = getAttribute(list);
+            irl = 1;
+        }
         
         // assert: allocatedTemporaries == n + 2
         
@@ -3231,23 +3272,98 @@ int gr_term() {
             typeWarning(ltype, rtype);
         
         if (operatorSymbol == SYM_ASTERISK) {
-            emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_MULTU);
-            emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+            if(ill == 1) {
+                if(irl == 1) {
+                    result = left * right;
+                    load_integer(result);
+                }
+                else {
+                    load_integer(left);
+                    emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_MULTU);
+                    emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                    tfree(1);
+                }
+            }
+            else if(irl == 1) {
+                load_integer(right);
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_MULTU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                tfree(1);
+                //irl = 0;
+            }
+            else {
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_MULTU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                tfree(1);
+            }
+            irl = 0;
+            ill = 0;
             
-        } else if (operatorSymbol == SYM_DIV) {
-            emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
-            emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+        }
+        else if (operatorSymbol == SYM_DIV) {
+            if(ill==1) {
+                if(right==0) {
+                }
+                else if(irl ==1) {
+                    result = left / right;
+                    load_integer(result);
+                }
+                //result = 0;
+                else {
+                    load_integer(left);
+                    emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                    emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                    tfree(1);
+                }
+            }
+            else if(irl==1) {
+                load_integer(right);
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                tfree(1);
+                //irl = 0;
+            }
+            else {
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFLO);
+                tfree(1);
+            }
+            ill = 0;
+            irl = 0;
             
-        } else if (operatorSymbol == SYM_MOD) {
-            emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
-            emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFHI);
+        }
+        else if (operatorSymbol == SYM_MOD) {
+            if(ill==1) {
+                if(irl==1) {
+                    result = left % right;
+                    load_integer(result);
+                }
+                else if(irl==0) {
+                    load_integer(left);
+                    emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                    emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFHI);
+                    tfree(1);
+                }
+            }
+            else if(irl==1) {
+                load_integer(right);
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFHI);
+                tfree(1);
+            }
+            else {
+                emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, 0, FCT_DIVU);
+                emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), 0, FCT_MFHI);
+                tfree(1);
+            }
+            ill = 0;
+            irl = 0;
         }
         
-        tfree(1);
+        //tfree(1);
     }
-    
     // assert: allocatedTemporaries == n + 1
-    
+    isOperation = 0;
     return ltype;
 }
 
@@ -3256,38 +3372,96 @@ int gr_shiftExpression() {
     int ltype;
     int operatorSymbol;
     int rtype;
+    int left;
+    int right;
+    int result;
+    int irl;
+    int ill;
+    irl = 0;
+    ill = 0;
+    attribute_list = malloc(8);
     
-    ltype = gr_simpleExpression();
+    ltype = gr_simpleExpression(attribute_list);
+    
+    if(isLiteralNumber) {
+        left = getAttribute(attribute_list);
+        ill = 1;
+    }
     
     // assert: allocatedTemporaries == n + 1
     
     while(isLeftShiftOrRightShift()) {
         operatorSymbol = symbol;
-        
+        isShift = 1;
         getSymbol();
         
-        rtype = gr_simpleExpression();
+        rtype = gr_simpleExpression(attribute_list);
+        
+        if(isLiteralNumber) {
+            right = getAttribute(attribute_list);
+            irl = 1;
+        }
         
         if (ltype != rtype)
             typeWarning(ltype, rtype);
         
         //TODO sign Extent?
         if (operatorSymbol == SYM_LSHIFT) {
-            emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLLV);
+            if(ill==1) {
+                if(irl==1) {
+                    result = left<<right;
+                    load_integer(result);
+                }
+                else {
+                    load_integer(left);
+                    emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLLV);
+                    tfree(1);
+                }
+            }
+            else if(irl==1) {
+                load_integer(right);
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLLV);
+                tfree(1);
+            }
+            else {
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SLLV);
+                
+                tfree(1);
+            }
+            irl = 0;
+            ill = 0;
         }
         else if (operatorSymbol == SYM_RSHIFT) {
             //TODO rtype
-            emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SRLV);
+            if(ill==1) {
+                if(irl ==1) {
+                    result = left>>right;
+                    load_integer(result);
+                }
+                else {
+                    load_integer(left);
+                    emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SRLV);
+                    tfree(1);
+                }
+            }
+            else if(irl==1) {
+                load_integer(right);
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SRLV);
+                tfree(1);
+            }
+            else {
+                emitRFormat(OP_SPECIAL, currentTemporary(), previousTemporary(), previousTemporary(), 0, FCT_SRLV);
+                tfree(1);
+            }
+            ill = 0;
+            irl = 0;
         }
-        tfree(1);
     }
-    
-    
-    
+    isShift = 0;
     return ltype;
 }
 
-int gr_simpleExpression() {
+int gr_simpleExpression(int* list) {
     int sign;
     int ltype;
     int operatorSymbol;
@@ -3318,7 +3492,7 @@ int gr_simpleExpression() {
         sign = 0;
     
     
-    ltype = gr_term();
+    ltype = gr_term(list);
     
     if (sign) {
         if (ltype != INT_T) {
@@ -3336,7 +3510,7 @@ int gr_simpleExpression() {
         
         getSymbol();
         
-        rtype = gr_term();
+        rtype = gr_term(list);
         
         // assert: allocatedTemporaries == n + 2
         
