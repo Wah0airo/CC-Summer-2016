@@ -29,7 +29,7 @@ literal          = integer | "'" ascii_character "'" .
 
 array            = "int" identifier "[" integer "]"  [ "=" "{"integer ...  "}" ]
 
-factor           = [ cast ] 
+factor           = [ cast ]
                     ( [ "*" ] ( identifier | "(" expression ")" ) |
                       call |
                       literal |
@@ -37,19 +37,19 @@ factor           = [ cast ]
 
 term             = factor { ( "*" | "/" | "%" ) factor } .
 
-simpleExpression = term { ( "+" | "-" ) term } .
+simpleExpression = ([ "-" ] )term { ( "+" | "-" ) term } .
 
-shiftExpression = ([ "-" ] )simpleExpression { („<<„ | „>>“) simpleExpression } .
+shiftExpression = simpleExpression { („<<„ | „>>“) simpleExpression } .
 
 expression       = shiftExpression [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) shiftExpression ] .
 
-while            = "while" "(" expression ")" 
+while            = "while" "(" expression ")"
                              ( statement |
                                "{" { statement } "}" ) .
 
-if               = "if" "(" expression ")" 
-                             ( statement | 
-                               "{" { statement } "}" ) 
+if               = "if" "(" expression ")"
+                             ( statement |
+                               "{" { statement } "}" )
                          [ "else"
                              ( statement |
                                "{" { statement } "}" ) ] .
@@ -59,18 +59,18 @@ return           = "return" [ expression ] .
 statement        = ( [ "*" ] identifier | "*" "(" expression ")" ) "="
                       expression ";" |
                     identifier "[" integer "]" "=" expression | array
-                    call ";" | 
-                    while | 
-                    if | 
+                    call ";" |
+                    while |
+                    if |
                     return ";" .
 
 variable         = type identifier .
 
-procedure        = "(" [ variable { "," variable } ] ")" 
+struct       = "struct " identifer "{" { variable ";"}"}" ";"
+
+procedure        = "(" [ variable { "," variable } ] ")"
                     ( ";" | "{" { variable ";" } { array ";"}{ statement } "}" ) .
 
-cstar            = { type identifier [ "=" [ cast ] [ "-" ] literal ] ";" |
+cstar            = { type identifier [ "=" [ cast ] [ "-" ] literal ] ";"
+                  struct | "struct" identifier "*" indentifier ";" 
                    ( "void" | type ) identifier array procedure } .
-
-INT_T
-```
