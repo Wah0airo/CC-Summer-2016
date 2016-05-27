@@ -2754,21 +2754,6 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
             //size_array = literal * WORDSIZE;
             index_1D = literal;
             size_array = index_1D * WORDSIZE;
-            //print((int*) " size_array: ");
-            // print(itoa(size_array, string_buffer, 10, 0, 0));
-            //print((int*) " offset_array: ");
-            //print(itoa(-offset_array, string_buffer, 10, 0, 0));
-            // print((int*) " which_table GL=1, LOC=2: ");
-            // print(itoa(whichTable, string_buffer, 10, 0, 0));
-            //printLineNumber((int*) " ln: ", lineNumber);
-            //println();
-            //createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array);
-            //print((int*) "Declare Array ");
-            //printString(id);
-            //print((int*) " size_array: ");
-            //print(itoa(size_array, string_buffer, 10, 0, 0));
-            //printLineNumber((int*) " ln: ", lineNumber);
-            //println();
             getSymbol();
             if(symbol == SYM_RBRACKET) {
                 getSymbol();
@@ -2781,41 +2766,12 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
                     if(whichTable == GLOBAL_TABLE) {
                         //size_array = index_1D * WORDSIZE;
                         offset_array = offset_loc + size_array;
-                        //offset_array = 0 - offset_array;
-                        //print((int*) "GLOBAL size_array: ");
-                        //print(itoa(size_array, string_buffer, 10, 0, 0));
-                        //print((int*) " name: ");
-                        //print(id);
-                        //print((int*) " offset_array: ");
-                        //print(itoa(offset_array, string_buffer, 10, 0, 0));
-                        //print((int*) " allocated Memory: ");
-                        //print(itoa(offset_loc, string_buffer, 10, 0, 0));
-                        //print((int*) " size: ");
-                        //print(itoa(size_array, string_buffer, 10, 0, 0));
-                        //print((int*) " type: ");
-                        //print(itoa(typ, string_buffer, 10, 0, 0));
-                        //print((int*) " which_table GL=1, LOC=2: ");
-                        //print(itoa(whichTable, string_buffer, 10, 0, 0));
-                        //printLineNumber((int*) " ln: ", lineNumber);
-                        //println();
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, -offset_array, size_array, 0, (int*) 0);
                     }
                     else {
                         //offset_array = (offset_loc + WORDSIZE) - size_array;
                         //offset_array = offset_loc + WORDSIZE  - size_array * WORDSIZE;
                         offset_array = offset_loc + WORDSIZE  - size_array;
-                        //print((int*) "LOCAL size_array: ");
-                        //print(itoa(size_array, string_buffer, 10, 0, 0));
-                        //print((int*) " address: ");
-                        //print(itoa(offset_array, string_buffer, 10, 0, 0));
-                        //print((int*) " offset: ");
-                        //print(itoa(offset_loc, string_buffer, 10, 0, 0));
-                        //print((int*) " which_table GL=1, LOC=2: ");
-                        //print(itoa(whichTable, string_buffer, 10, 0, 0));
-                        //print((int*) " type: ");
-                        //print(itoa(typ, string_buffer, 10, 0, 0));
-                        //printLineNumber((int*) " ln: ", lineNumber);
-                        //println();
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array, 0, (int*) 0);
                     }
 
@@ -2827,22 +2783,10 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
                         if(literal > 0) {
                             index_2D = literal;
                             size_array = index_1D * index_2D * WORDSIZE;
-                            //print((int*)"Array 2D size ");
-                            //print(itoa(size_array, string_buffer, 10, 0, 0));
-                            //print((int*)" index 1D ");
-                            //print(itoa(index_1D, string_buffer, 10, 0, 0));
-                            //print((int*)" index 2D ");
-                            //print(itoa(index_2D, string_buffer, 10, 0, 0));
-                            //print((int*)" offset ");
-                            //print(itoa(offset_loc, string_buffer, 10, 0, 0));
-                            //println();
                             getSymbol();
                             if(symbol == SYM_RBRACKET) {
                                 getSymbol();
                                 offset_array = offset_loc + WORDSIZE  - size_array;
-                                //print((int*)" address ");
-                                //print(itoa(offset_array, string_buffer, 10, 0, 0));
-                                //println();
                                 createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array, index_2D, (int*) 0);
                             }
                             else {
