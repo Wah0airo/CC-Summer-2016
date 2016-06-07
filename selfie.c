@@ -644,6 +644,8 @@ int isStarOrDivOrModulo();
 int isPlusOrMinus();
 int isComparison();
 int isStruct();
+int isAndOr();
+int isEndOfBoolean();
 
 int lookForFactor();
 int lookForStatement();
@@ -666,12 +668,13 @@ int  help_call_codegen(int* entry, int* procedure);
 void help_procedure_prologue(int localVariables);
 void help_procedure_epilogue(int parameters);
 void declare_array(int* id, int typ, int off, int whichTable);
-int  gr_call(int* procedure);
-int  gr_factor(int* constFold);
-int  gr_term(int* constFold);
-int  gr_simpleExpression(int* constFold);
-int  gr_shiftExpression(int* constFold);
-int  gr_expression();
+int gr_call(int* procedure);
+int gr_factor(int* constFold);
+int gr_term(int* constFold);
+int gr_simpleExpression(int* constFold);
+int gr_shiftExpression(int* constFold);
+int gr_expression();
+//int gr_boolean();
 void gr_while();
 void gr_if();
 void gr_return(int returnType);
@@ -923,6 +926,7 @@ void emitJFormat(int opcode, int instr_index);
 
 void fixup_relative(int fromAddress);
 void fixup_absolute(int fromAddress, int toAddress);
+void fixlink_relative(int fromAddress);
 void fixlink_absolute(int fromAddress, int toAddress);
 
 int copyStringToBinary(int* s, int a);
@@ -1913,13 +1917,10 @@ int isCharacterLetter() {
 }
 
 int isCharacterDigit() {
-    if (character >= '0')
-        if (character <= '9')
-            return 1;
-        else
-            return 0;
-        else
-            return 0;
+    if (character >= '0' && character <= '9')
+        return 1;
+    else
+        return 0;
 }
 
 int isCharacterLetterOrDigitOrUnderscore() {
@@ -2527,6 +2528,29 @@ int isStruct() {
         return 1;
     else
         return 0;
+}
+
+int isAndOr() {
+    if(symbol==SYM_LOGICAL_AND)
+        return 1;
+    else if(symbol==SYM_LOGICAL_OR)
+        return 1;
+    else
+        return 0;
+}
+
+int isEndOfBoolean() {
+    if(symbol == SYM_RPARENTHESIS)
+        return 1;
+    else if (symbol == SYM_SEMICOLON)
+        return 1;
+    else if (symbol == SYM_COMMA)
+        return 1;
+    else if (symbol == SYM_EOF)
+        return 1;
+    else if (symbol == SYM_RBRACKET)
+        return 1;
+    return 0;
 }
 
 int lookForFactor() {
@@ -3257,25 +3281,11 @@ int gr_factor(int* constFold) {
     else if(symbol==SYM_NEGATION) {
         //Do Something.....
         getSymbol();
-        //if(symbol==SYM_LPARENTHESIS) {
-        
-        //}
-        //else {
-        
-        //}
-        //Assembly
-        //wert von register Holen
-        //Vergleich
-        //bits kippen
         type = gr_expression();
         emitIFormat(OP_BEQ, REG_ZR, currentTemporary(), 4);
         emitIFormat(OP_ADDIU, REG_ZR, currentTemporary(), 0);
         emitIFormat(OP_BEQ, REG_ZR, currentTemporary(), 2);
         emitIFormat(OP_ADDIU, REG_ZR, currentTemporary(), 1);
-        
-        
-        
-        
     }
     else if (symbol == SYM_INTEGER) {
         isLiteralNumber = 1;
@@ -3888,7 +3898,8 @@ int gr_simpleExpression(int *constFold) {
     
     return ltype;
 }
-int gr_expression() {
+
+int gr_comparison() {
     int ltype;
     int operatorSymbol;
     int rtype;
@@ -4038,6 +4049,38 @@ int gr_expression() {
     
     // assert: allocatedTemporaries == n + 1
     
+    return ltype;
+}
+
+int gr_expression() {
+    int ltype;
+    int operatorSymbol;
+    int rtype;
+    int jumpForward;
+    jumpForward = 0;
+    
+    ltype = gr_comparison();
+    
+    while(isAndOr()) {
+        operatorSymbol = symbol;
+        getSymbol();
+        if(operatorSymbol == SYM_LOGICAL_AND) {
+            jumpForward = binaryLength;
+            emitIFormat(OP_BEQ, REG_ZR, currentTemporary(), 0);
+            tfree(1);
+            rtype = gr_comparison();
+        }
+        else if(operatorSymbol == SYM_LOGICAL_OR) {
+            jumpForward = binaryLength;
+            emitIFormat(OP_BNE, REG_ZR, currentTemporary(), 0);
+            tfree(1);
+            rtype = gr_comparison();
+        }
+        //rtype = gr_comparison();
+        if (ltype != rtype)
+            typeWarning(ltype, rtype);
+        fixup_relative(jumpForward);
+    }
     return ltype;
 }
 
@@ -5681,6 +5724,18 @@ void fixup_relative(int fromAddress) {
 void fixup_absolute(int fromAddress, int toAddress) {
     storeBinary(fromAddress,
                 encodeJFormat(getOpcode(loadBinary(fromAddress)), toAddress / WORDSIZE));
+}
+
+void fixlink_relative(int fromAddress) {
+    int previousAddress;
+    
+    while (fromAddress != 0) {
+        previousAddress = getImmediate(loadBinary(fromAddress)) * WORDSIZE;
+        
+        fixup_relative(fromAddress);
+        
+        fromAddress = previousAddress;
+    }
 }
 
 void fixlink_absolute(int fromAddress, int toAddress) {
@@ -8776,11 +8831,18 @@ int main(int argc, int* argv) {
     a = 5;
     e = 5;
     f = 6;
+    j = 6;
+    
     b = !a;
     c = !b;
     d = !!b;
     g = !(a==e);
-    if(!(a==f)) {
+    k = (a == f || e == j);
+    h = (a == e || f == j); //F
+    l = (a == e && f == j);
+    m = (a == f && e == j); // F
+    
+    if(!(a == f)) {
         print((int*)"!(a==f)");
         println();
     }
@@ -8798,8 +8860,20 @@ int main(int argc, int* argv) {
     print((int*)"g=");
     printString(itoa(g, string_buffer, 10, 0, 0));
     println();
+    print((int*)"h="); // == 1
+    printString(itoa(h, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"k="); // == 0
+    printString(itoa(k, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"l="); // == 1
+    printString(itoa(l, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"m="); // == 0
+    printString(itoa(m, string_buffer, 10, 0, 0));
+    println();
     
-    
+
     print((int*)"End of Main");
     println();
     
