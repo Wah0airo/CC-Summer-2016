@@ -31,9 +31,10 @@ array            = "int" identifier "[" integer "]"  [ "=" "{"integer ...  "}" ]
 
 factor           = [ cast ]
                     ( [ "*" ] ( identifier | "(" expression ")" ) |
-                      call |
+                      call | negation "(" expression ")" | "[" arrayaccess | "->" struct_access
                       literal |
                       """ { ascii_character } """ ) .
+
 
 term             = factor { ( "*" | "/" | "%" ) factor } .
 
@@ -41,8 +42,8 @@ simpleExpression = ([ "-" ] )term { ( "+" | "-" ) term } .
 
 shiftExpression = simpleExpression { („<<„ | „>>“) simpleExpression } .
 
-expression       = shiftExpression [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) shiftExpression ] .
-
+comparision       = shiftExpression [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) shiftExpression ] .
+Expresson = comparison [( "&&" "||" ) comparison ]
 while            = "while" "(" expression ")"
                              ( statement |
                                "{" { statement } "}" ) .
@@ -72,5 +73,5 @@ procedure        = "(" [ variable { "," variable } ] ")"
                     ( ";" | "{" { variable ";" } { array ";"}{ statement } "}" ) .
 
 cstar            = { type identifier [ "=" [ cast ] [ "-" ] literal ] ";"
-                  struct | "struct" identifier "*" indentifier ";" 
+                  struct | "struct" identifier "*" indentifier ";"
                    ( "void" | type ) identifier array procedure } .

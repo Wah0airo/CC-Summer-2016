@@ -25,6 +25,10 @@ self: cself
 	diff -s selfie1.m selfie2.m > diff.log
 	cat diff.log
 
+#selfdebugging mode and piplining output to file
+selfdebug:
+	./selfie -c selfie.c -d 1 > dbg.txt
+
 # Test self-compilation, self-execution, and self-hosting
 test: selfie
 	./selfie -c selfie.c -o selfie1.m -s selfie1.s -m 2 -c selfie.c -o selfie2.m -s selfie2.s
