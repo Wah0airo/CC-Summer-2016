@@ -1902,19 +1902,12 @@ int findNextCharacter() {
 }
 
 int isCharacterLetter() {
-    if (character >= 'a')
-        if (character <= 'z')
-            return 1;
-        else
-            return 0;
-        else if (character >= 'A')
-            if (character <= 'Z')
-                return 1;
-            else
-                return 0;
-            else
-                return 0;
+    if ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z'))
+        return 1;
+    else
+        return 0;
 }
+
 
 int isCharacterDigit() {
     if (character >= '0' && character <= '9')
@@ -3358,15 +3351,6 @@ int gr_term(int* constFold) {
     if(isLiteralNumber) {
         leftValue = *(constFold);
         ill = isLiteralNumber;
-        // isLiteralNumber = 0;
-        // print((int*)"in term leftValue: ");
-        // print(itoa(leftValue,string_buffer,10,0,0));
-        // printLineNumber((int*)"ln: ",lineNumber);
-        // print((int*)" ill: ");
-        // print(itoa(ill,string_buffer,10,0,0));
-        // printSymbol(symbol);
-        // println();
-        
     }
     else{
         *(constFold) = 0;
@@ -3378,10 +3362,6 @@ int gr_term(int* constFold) {
     while (isStarOrDivOrModulo()) {
         
         operatorSymbol = symbol;
-        // print((int*)"operatorSymbol: ");
-        // printSymbol(symbol);
-        // printLineNumber((int*)"Hi in term: ",lineNumber );
-        // println();
         getSymbol();
         isLiteralNumber = 0;
         rtype = gr_factor(constFold);
@@ -3420,10 +3400,6 @@ int gr_term(int* constFold) {
             } // ill == 0
             else{
                 load_integer(leftValue);
-                // print((int*)"number of registers in Term: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
                 if (operatorSymbol == SYM_ASTERISK) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_MULTU);
                     emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFLO);
@@ -3436,10 +3412,6 @@ int gr_term(int* constFold) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_DIVU);
                     emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFHI);
                 }
-                // print((int*)"number of registers in Term_2: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
                 tfree(1);
                 ill = 0;
             }
@@ -3449,13 +3421,6 @@ int gr_term(int* constFold) {
                 leftValue = *(constFold);
                 load_integer(leftValue);
                 
-                // print((int*)"allocatedTemporaries: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // print((int*)" ill: ");
-                // print(itoa(ill,string_buffer,10,0,0));
-                // print((int*)" leftValue: ");
-                // print(itoa(leftValue,string_buffer,10,0,0));
-                // println;
                 
                 if (operatorSymbol == SYM_ASTERISK) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_MULTU);
@@ -3469,11 +3434,6 @@ int gr_term(int* constFold) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_DIVU);
                     emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFHI);
                 }
-                // print((int*)"number of registers in Term_3: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                
                 tfree(1);
                 
                 ill = 0;
@@ -3491,11 +3451,6 @@ int gr_term(int* constFold) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_DIVU);
                     emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFHI);
                 }
-                // print((int*)"number of registers in Term_4: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                
                 tfree(1);
                 
                 ill = 0;
@@ -3504,15 +3459,6 @@ int gr_term(int* constFold) {
         *(constFold) = 0;
         isLiteralNumber = 0;
     }
-    
-    // if (ill) { //int
-    //         isLiteralNumber = 1;
-    //         *(constFold) = leftValue;
-    // }
-    // else { //var
-    //         isLiteralNumber= 0;
-    //         *(constFold) = 0;
-    // }
     
     // assert: allocatedTemporaries == n + 1
     
@@ -3536,14 +3482,7 @@ int  gr_shiftExpression(int* constFold) {
     if(isLiteralNumber == 1) {
         leftValue = *(constFold);
         ill = isLiteralNumber;
-        // isLiteralNumber = 0;
-        // print((int*)"in  shiftE: leftValue: ");
-        // print(itoa(leftValue,string_buffer,10,0,0));
-        // printLineNumber((int*)"ln: ",lineNumber);
-        // print((int*)" ill: ");
-        // print(itoa(ill,string_buffer,10,0,0));
-        // printSymbol(symbol);
-        // println();
+        
     }
     else{
         ill = 0;
@@ -3551,8 +3490,6 @@ int  gr_shiftExpression(int* constFold) {
         isLiteralNumber = 0;
     }
     
-    // *(constFold) = 0;
-    // isLiteralNumber = 0;
     
     // assert: allocatedTemporaries == n + 1
     
@@ -3569,13 +3506,6 @@ int  gr_shiftExpression(int* constFold) {
             irl = isLiteralNumber;
             rightValue = *(constFold);
             isLiteralNumber = 0;
-            // print((int*)" irl <<< >>>: ");
-            // print(itoa(irl,string_buffer,10,0,0));
-            // print((int*)" rightValue <<< >>>: ");
-            // print(itoa(rightValue,string_buffer,10,0,0));
-            // println();
-            
-            
             
         }
         else{
@@ -3595,13 +3525,6 @@ int  gr_shiftExpression(int* constFold) {
                     *constFold = leftValue >> rightValue;
                 
                 isLiteralNumber = 1;
-                
-                // print((int*)" <<< constant folding irl &ill == 1 ");
-                // print(itoa(*constFold,string_buffer,10,0,0));
-                // println();
-                // print((int*)" isLiteralNumber: ");
-                // print(itoa(isLiteralNumber,string_buffer,10,0,0));
-                // println();
                 
                 return ltype;
                 
@@ -3623,14 +3546,6 @@ int  gr_shiftExpression(int* constFold) {
             if(irl == 1) {
                 leftValue = rightValue;
                 load_integer(leftValue);
-                // print((int*)"leftValue: ");
-                // print(itoa(leftValue,string_buffer,10,0,0));
-                // print((int*)" allocatedTemporaries: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // println();
-                
-                
-                
                 if (operatorSymbol == SYM_LSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(), previousTemporary(), previousTemporary(), FCT_SLLV);
                 
@@ -3703,16 +3618,6 @@ int gr_simpleExpression(int *constFold) {
     if (isLiteralNumber) {
         leftValue = *(constFold);
         ill = isLiteralNumber;
-        // isLiteralNumber = 0;
-        // print((int*)"in  SimpleE: leftValue: ");
-        // print(itoa(leftValue,string_buffer,10,0,0));
-        // printLineNumber((int*)"ln: ",lineNumber);
-        // print((int*)" ill: ");
-        // print(itoa(ill,string_buffer,10,0,0));
-        // printSymbol(symbol);
-        // println();
-        
-        
     }
     else{
         leftValue = 0;
@@ -3753,15 +3658,6 @@ int gr_simpleExpression(int *constFold) {
             isLiteralNumber = 0;
         }
         
-        // print((int*)"isLiteralNumber [in is PlOrMin]: ");
-        // print(itoa(isLiteralNumber,string_buffer,10,0,0));
-        // print((int*)" ill: ");
-        // print(itoa(ill,string_buffer,10,0,0));
-        // print((int*)" irl: ");
-        // print(itoa(irl,string_buffer,10,0,0));
-        // println();
-        // assert: allocatedTemporaries == n + 2
-        
         if(ill) {
             if(irl) {
                 if (operatorSymbol == SYM_PLUS)
@@ -3782,9 +3678,6 @@ int gr_simpleExpression(int *constFold) {
                     }
                     else if(rtype == INTSTAR_T)
                         typeWarning(ltype,rtype);
-                    // print((int*)"Allocated Temporaries in simple E");
-                    // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                    // println();
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_ADDU);
                 }
                 else if(operatorSymbol == SYM_MINUS) {
@@ -3793,10 +3686,6 @@ int gr_simpleExpression(int *constFold) {
                     
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_SUBU);
                 }
-                // print((int*)"number of registers in Simple expression: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
                 
                 tfree(1);
                 ill = 0;
@@ -3804,20 +3693,7 @@ int gr_simpleExpression(int *constFold) {
         }
         else{
             if(irl) {
-                // print((int*)"number of registers in Simple expression: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                //  leftValue = rightValue;
                 load_integer(rightValue);
-                // print(itoa(rightValue,string_buffer,10,0,0));
-                
-                
-                // print((int*)" number of registers in Simple expression:: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                
                 if (operatorSymbol == SYM_PLUS) {
                     if (ltype == INTSTAR_T) {
                         if (rtype == INT_T)
@@ -3835,20 +3711,12 @@ int gr_simpleExpression(int *constFold) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_SUBU);
                 }
                 
-                // print((int*)"number of registers in simple Expression_2: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                
                 tfree(1);
                 ill = 0;
                 
                 
             } else {
                 
-                // println();
-                // print((int*)"kommt er hier her ?:");
-                // println();
                 if(operatorSymbol == SYM_PLUS) {
                     if(ltype == INTSTAR_T) {
                         if(rtype == INT_T)
@@ -3856,9 +3724,6 @@ int gr_simpleExpression(int *constFold) {
                     }
                     else if(rtype == INTSTAR_T)
                         typeWarning(ltype, rtype);
-                    // print((int*)"Allocated Temporaries in simple E");
-                    // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                    // println();
                     emitRFormat(OP_SPECIAL,previousTemporary(),currentTemporary(),previousTemporary(),FCT_ADDU);
                     
                 }
@@ -3869,32 +3734,17 @@ int gr_simpleExpression(int *constFold) {
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(),previousTemporary(),FCT_SUBU);
                     
                 }
-                // print((int*)"number of registers in SE_3: ");
-                // print(itoa(allocatedTemporaries,string_buffer,10,0,0));
-                // printLineNumber((int*)"ln: ",lineNumber);
-                // println();
-                
                 tfree(1);
                 ill = 0;
             }
         }
-        
-        // isLiteralNumber = 0;
-        // *(constFold) = 0;
         
         
     }
     // assert: allocatedTemporaries == n + 1
     
     
-    // if(ill) {
-    //         isLiteralNumber = 1;
-    //         *(constFold) = leftValue;
-    // }
-    // else{
-    //         isLiteralNumber = 0;
-    //         *(constFold) = 0;
-    // }
+    
     
     return ltype;
 }
@@ -3917,11 +3767,6 @@ int gr_comparison() {
         // ill = 1;
         leftValue = *(constFold);
         
-        // print((int*)"in  expression: leftValue: ");
-        // print(itoa(leftValue,string_buffer,10,0,0));
-        // printLineNumber((int*)"ln: ",lineNumber);
-        // printSymbol(symbol);
-        // println();
         
         if(leftValue < 0) {
             load_integer(0 - leftValue);
@@ -3933,10 +3778,6 @@ int gr_comparison() {
         }
         else{
             load_integer(*(constFold));
-            // print((int*)"*constant Fold");
-            // print(itoa(*(constFold),string_buffer,10,0,0));
-            // println();
-            
         }
         
         
@@ -3963,18 +3804,10 @@ int gr_comparison() {
             if(leftValue < 0) {
                 load_integer(0 -leftValue); //* (-1));
                 
-                // print((int*)"leftValue");
-                // print(itoa(leftValue,string_buffer,10,0,0));
-                // println();
-                
-                
                 emitRFormat(OP_SPECIAL,REG_ZR, currentTemporary(), currentTemporary(), FCT_SUBU);
             }
             else{
                 load_integer(*(constFold));
-                // print((int*)"*constant Fold");
-                // print(itoa(*(constFold),string_buffer,10,0,0));
-                // println();
             }
             
         }
@@ -8761,6 +8594,102 @@ void testArrays(){
     
 }
 
+void testBoolean() {
+    int a;
+    int b;
+    int c;
+    int d;
+    int e;
+    int f;
+    int g;
+    int h;
+    int i;
+    int j;
+    int k;
+    int l;
+    int m;
+    int n;
+    int o;
+    int p;
+    int q;
+    int r;
+    int s;
+    int t;
+    int u;
+    a = 5;
+    e = 5;
+    f = 6;
+    j = 6;
+    
+    b = !a;
+    c = !b;
+    d = !!b;
+    g = !(a==e);
+    k = (a == f || e == j);
+    h = (a == e || f == j); //F
+    l = (a == e && f == j);
+    m = (a == f && e == j); // F
+    n = ((a == e && f == j) || (f == a && a == e)); // T
+    o = ((a == e || f == j) && (f == a || a == e)); // T
+    p = ((a == f || e == j) && (f == a || a == e)); // F
+    r = (!(a == f || e == j) && (f == a || a == e)); // T
+    s = a && b && c && d;
+    t = !(a && b && c && d);
+    u = !(a || b ||  c);
+    
+    if(!(a == f)) {
+        print((int*)"!(a==f)");
+        println();
+    }
+    print((int*)"Testing !");
+    println();
+    print((int*)"b=");
+    printString(itoa(b, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"c=");
+    printString(itoa(c, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"d=");
+    printString(itoa(d, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"g=");
+    printString(itoa(g, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"h="); // == 1
+    printString(itoa(h, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"k="); // == 0
+    printString(itoa(k, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"l="); // == 1
+    printString(itoa(l, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"m=");
+    printString(itoa(m, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"n=");
+    printString(itoa(n, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"o=");
+    printString(itoa(o, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"p=");
+    printString(itoa(p, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"r="); // == 1
+    printString(itoa(r, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"s="); // == 1
+    printString(itoa(s, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"t="); // == 0
+    printString(itoa(t, string_buffer, 10, 0, 0));
+    println();
+    print((int*)"u="); // == 0
+    printString(itoa(u, string_buffer, 10, 0, 0));
+    println();
+
+}
 
 int main(int argc, int* argv) {
     int a;
@@ -8783,6 +8712,8 @@ int main(int argc, int* argv) {
     int q;
     int r;
     int s;
+    int t;
+    int u;
     
     //struct myStruct* myStructure;
     struct globalStruct* myGlobal;
@@ -8823,57 +8754,8 @@ int main(int argc, int* argv) {
     
     consTests();
     test2Darrays();
-    print((int*)"Zuweisung global arrays");
-    println();
-    //arr[0] = 1;
-    //if(i > 1) {
-    //  print((int*)"i> 1");
-    a = 5;
-    e = 5;
-    f = 6;
-    j = 6;
+    testBoolean();
     
-    b = !a;
-    c = !b;
-    d = !!b;
-    g = !(a==e);
-    k = (a == f || e == j);
-    h = (a == e || f == j); //F
-    l = (a == e && f == j);
-    m = (a == f && e == j); // F
-    
-    if(!(a == f)) {
-        print((int*)"!(a==f)");
-        println();
-    }
-    print((int*)"Testing !");
-    println();
-    print((int*)"b=");
-    printString(itoa(b, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"c=");
-    printString(itoa(c, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"d=");
-    printString(itoa(d, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"g=");
-    printString(itoa(g, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"h="); // == 1
-    printString(itoa(h, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"k="); // == 0
-    printString(itoa(k, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"l="); // == 1
-    printString(itoa(l, string_buffer, 10, 0, 0));
-    println();
-    print((int*)"m="); // == 0
-    printString(itoa(m, string_buffer, 10, 0, 0));
-    println();
-    
-
     print((int*)"End of Main");
     println();
     
