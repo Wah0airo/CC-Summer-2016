@@ -8444,7 +8444,7 @@ struct globalStruct* myGlobal;
 
 void consTests(){
     int a; int b; int c; int d; int e;  int f; int g; int h; int i; int j; int k;
-    
+
     a = 1024;
     b = 512;
     c = b << 2;
@@ -8455,27 +8455,27 @@ void consTests(){
     h = 4 * 8;
     i = 25 / 5;
     j = 20400 % 1000;
-    // k = 2 + 7 - 4 * 12 % 3;
-    k = 0;
-    
+    k = 2 + 7 - 4 * 12 % 3;
+    //k = 0;
+
     print((int*) "Constantfolding leftshift by two: ");
     println();
     print((int*)itoa(d, string_buffer, 10, 0, 0));
     println();
-    
+
     print((int*) "leftshift by two: ");
     println();
     print((int*)itoa(c, string_buffer, 10, 0, 0));
     println();
-    
+
     print((int*) "Constantfolding rightshift by four: ");
     print((int*)itoa(e, string_buffer, 10, 0, 0));
     println();
-    
+
     c = a >> 4;
     print((int*)itoa(c, string_buffer, 10, 0, 0));
     println();
-    
+
     print((int*)"f: ");
     print((int*)itoa(f, string_buffer, 10, 0, 0));
     println();
@@ -8494,6 +8494,7 @@ void consTests(){
     print((int*)"k: ");
     print((int*)itoa(k, string_buffer, 10, 0, 0));
     println();
+
     
 }
 
