@@ -114,6 +114,7 @@ int roundUp(int n, int m);
 
 int* malloc(int size);
 void exit(int code);
+int* free(int* ptr);
 //------------------------- Test for Global Arrays -----------------
 int garr[10];
 int gza[3][3];
@@ -424,6 +425,7 @@ void resetSymbolTables();
 void createSymbolTableEntry(int which, int* string, int line, int class, int type, int value, int address, int size, int cols, int* newStruct);
 int* searchSymbolTable(int* entry, int* string, int class);
 int* getSymbolTableEntry(int* string, int class);
+void printSymbolTable();
 
 int isUndefinedProcedure(int* entry);
 int reportUndefinedProcedures();
@@ -979,6 +981,9 @@ void implementOpen();
 void emitMalloc();
 void implementMalloc();
 
+void emitFree();
+void implementFree();
+
 // ------------------------ GLOBAL CONSTANTS -----------------------
 
 int debug_read   = 0;
@@ -986,6 +991,7 @@ int debug_write  = 0;
 int debug_open   = 0;
 
 int debug_malloc = 0;
+int debug_free   = 0;
 
 int SYSCALL_EXIT   = 4001;
 int SYSCALL_READ   = 4003;
@@ -993,6 +999,7 @@ int SYSCALL_WRITE  = 4004;
 int SYSCALL_OPEN   = 4005;
 
 int SYSCALL_MALLOC = 4045;
+int SYSCALL_FREE   = 4046;
 
 // -----------------------------------------------------------------
 // ----------------------- HYPSTER SYSCALLS ------------------------
@@ -1177,6 +1184,7 @@ int EXCEPTION_HEAPOVERFLOW       = 4;
 int EXCEPTION_EXIT               = 5;
 int EXCEPTION_INTERRUPT          = 6;
 int EXCEPTION_PAGEFAULT          = 7;
+int EXCEPTION_BEGINOFHEAP        = 8;
 
 int* EXCEPTIONS; // array of strings representing exceptions
 
@@ -1240,6 +1248,7 @@ void initInterpreter() {
     *(EXCEPTIONS + EXCEPTION_EXIT)               = (int) "exit";
     *(EXCEPTIONS + EXCEPTION_INTERRUPT)          = (int) "timer interrupt";
     *(EXCEPTIONS + EXCEPTION_PAGEFAULT)          = (int) "page fault";
+    *(EXCEPTIONS + EXCEPTION_BEGINOFHEAP)        = (int) "heap penetrating global constants";
 }
 
 void resetInterpreter() {
@@ -2344,6 +2353,67 @@ int* getSymbolTableEntry(int* string, int class) {
     }
 
     return searchSymbolTable(global_symbol_table, string, class);
+}
+
+void printSymbolTable() {
+    int* table;
+    table = global_symbol_table;
+    print((int*) "GlobalSymbolTable");
+    println();
+    while (table != (int*) 0) {
+        printString(getString(table));
+        print((int*) " ln=");
+        print(itoa(getLineNumber(table), string_buffer, 10, 0, 0));
+        print((int*) " value:");
+        print(itoa(getValue(table), string_buffer, 10, 0, 0));
+        print((int*) " address:");
+        print(itoa(getAddress(table), string_buffer, 10, 0, 0));
+        print((int*) " scope:");
+        print(itoa(getScope(table), string_buffer, 10, 0, 0));
+        print((int*) " size:");
+        print(itoa(getSize(table), string_buffer, 10, 0, 0));
+        print((int*) " class:");
+        print(itoa(getClass(table), string_buffer, 10, 0, 0));
+        println();
+        table = getNextEntry(table);
+        
+    }
+    table = library_symbol_table;
+    print((int*) "LibrarySymbolTable");
+    println();
+    while (table != (int*) 0) {
+        printString(getString(table));
+        print((int*) " ln=");
+        print(itoa(getLineNumber(table), string_buffer, 10, 0, 0));
+        print((int*) " value:");
+        print(itoa(getValue(table), string_buffer, 10, 0, 0));
+        print((int*) " address:");
+        print(itoa(getAddress(table), string_buffer, 10, 0, 0));
+        print((int*) " scope:");
+        print(itoa(getScope(table), string_buffer, 10, 0, 0));
+        print((int*) " size:");
+        print(itoa(getSize(table), string_buffer, 10, 0, 0));
+        println();
+        table = getNextEntry(table);
+    }
+    table = local_symbol_table;
+    print((int*) "LocalSymbolTable");
+    println();
+    while (table != (int*) 0) {
+        printString(getString(table));
+        print((int*) " ln=");
+        print(itoa(getLineNumber(table), string_buffer, 10, 0, 0));
+        print((int*) " value:");
+        print(itoa(getValue(table), string_buffer, 10, 0, 0));
+        print((int*) " address:");
+        print(itoa(getAddress(table), string_buffer, 10, 0, 0));
+        print((int*) " scope:");
+        print(itoa(getScope(table), string_buffer, 10, 0, 0));
+        print((int*) " size:");
+        print(itoa(getSize(table), string_buffer, 10, 0, 0));
+        println();
+        table = getNextEntry(table);
+    }
 }
 
 //*********************Struct Table*********************
@@ -5276,7 +5346,7 @@ void selfie_compile() {
     emitWrite();
     emitOpen();
     emitMalloc();
-
+    emitFree();
     emitID();
     emitCreate();
     emitSwitch();
@@ -6148,7 +6218,6 @@ void emitMalloc() {
 void implementMalloc() {
     int size;
     int bump;
-
     if (debug_malloc) {
         print(binaryName);
         print((int*) ": trying to malloc ");
@@ -6174,6 +6243,64 @@ void implementMalloc() {
             print(itoa(size, string_buffer, 10, 0, 0));
             print((int*) " bytes at virtual address ");
             print(itoa(bump, string_buffer, 16, 8, 0));
+            print((int*) " break: ");
+            print(itoa(brk, string_buffer, 10, 0, 0));
+            print((int*) " bump: ");
+            print(itoa(bump, string_buffer, 10, 0, 0));
+            
+            println();
+        }
+    }
+}
+
+void emitFree() {
+    
+    createSymbolTableEntry(LIBRARY_TABLE, (int*) "free", 0, PROCEDURE, INTSTAR_T, 0, binaryLength, 0, 0, (int*) 0);
+    
+    emitIFormat(OP_LW, REG_SP, REG_A0, 0); // size
+    emitIFormat(OP_ADDIU, REG_SP, REG_SP, -WORDSIZE);
+    
+    emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_FREE);
+    emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
+    
+    emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
+}
+
+void implementFree() {
+    int size;
+    int bump;
+    int temp_result;
+    //TODO
+    if (debug_free) {
+        print(binaryName);
+        print((int*) ": trying to free ");
+        print(itoa(*(registers+REG_A0), string_buffer, 10, 0, 0));
+        print((int*) " bytes");
+        println();
+    }
+    //liefert den stack pointer anstelle der Size
+    size = roundUp(*(registers+REG_A0), WORDSIZE);
+    
+    bump = brk;
+    temp_result = bump - size;
+    //TODO grenze?
+    if (bump - temp_result >= *(registers+REG_GP))
+        throwException(EXCEPTION_BEGINOFHEAP, 0);
+    else {
+        *(registers+REG_V0) = bump;
+        brk = bump - temp_result;
+        
+        if (debug_free) {
+            print(binaryName);
+            print((int*) ": actually freeing ");
+            print(itoa(temp_result, string_buffer, 10, 0, 0));
+            print((int*) " bytes at virtual address ");
+            print(itoa(bump, string_buffer, 16, 8, 0));
+            print((int*) " break: ");
+            print(itoa(brk, string_buffer, 10, 0, 0));
+            print((int*) " bump: ");
+            print(itoa(bump, string_buffer, 10, 0, 0));
+            
             println();
         }
     }
@@ -6652,6 +6779,8 @@ void fct_syscall() {
             implementDelete();
         else if (*(registers+REG_V0) == SYSCALL_MAP)
             implementMap();
+        else if (*(registers+REG_V0) == SYSCALL_FREE)
+            implementFree();
         else {
             pc = pc - WORDSIZE;
 
@@ -8549,6 +8678,8 @@ int main(int argc, int* argv) {
     int a; int b; int c; int d; int e; int f; int g; int h;
     int i; int arr[8]; int j; int k; int l; int m; int n; int o;
     int p;    int q;    int r;    int s;
+    int* ptr;
+    int* ptr2;
     //struct myStruct* myStructure;
     struct globalStruct* myGlobal;
     // int td[3][3];
@@ -8582,8 +8713,18 @@ int main(int argc, int* argv) {
         print((int*) ": usage: selfie { -c source | -o binary | -s assembly | -l binary } [ -m size ... | -d size ... | -y size ... ] ");
         println();
     }
-
-
+    a = 2;
+    ptr = malloc(4);
+    *ptr = a;
+    free(ptr);
+    ptr2 = malloc(8);
+    *ptr2 = a;
+    free(ptr2);
+    //print((int*)"malloc...");
+    //printString(ptr);
+    //print(itoa(*(ptr), string_buffer, 10, 0, 0));
+    //println();
+    
 
     //consTests();
     testArrays();
@@ -8637,7 +8778,7 @@ int main(int argc, int* argv) {
     print((int*)"m="); // == 0
     printString(itoa(m, string_buffer, 10, 0, 0));
     println();
-
+    printSymbolTable();
 
     print((int*)"End of Main");
     println();
