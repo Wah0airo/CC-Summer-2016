@@ -114,7 +114,7 @@ int roundUp(int n, int m);
 
 int* malloc(int size);
 void exit(int code);
-int* free(int* ptr);
+void free(int* address);
 //------------------------- Test for Global Arrays -----------------
 int garr[10];
 int gza[3][3];
@@ -429,6 +429,10 @@ void printSymbolTable();
 
 int isUndefinedProcedure(int* entry);
 int reportUndefinedProcedures();
+
+void deleteSymbolTable(int* symTable);
+
+int freeAddressList = 0;
 
 // symbol table entry:
 // +----+---------+
@@ -2307,6 +2311,16 @@ void createSymbolTableEntry(int whichTable, int* string, int line, int class, in
         setNextEntry(newEntry, library_symbol_table);
         library_symbol_table = newEntry;
     }
+}
+
+void deleteSymbolTable(int* symTable) {
+    int* next;
+    while(symTable != (int*) 0) {
+        next = getNextEntry(symTable);
+        free(symTable);
+        symTable = next;
+    }
+    
 }
 
 int* searchSymbolTable(int* entry, int* string, int class) {
@@ -5042,7 +5056,7 @@ void gr_procedure(int* procedure, int returnType) {
         println();
         syntaxErrorUnexpected();
     }
-
+    deleteSymbolTable(local_symbol_table);
     local_symbol_table = (int*) 0;
 
     // assert: allocatedTemporaries == 0
@@ -6218,6 +6232,8 @@ void emitMalloc() {
 void implementMalloc() {
     int size;
     int bump;
+    int address;
+    
     if (debug_malloc) {
         print(binaryName);
         print((int*) ": trying to malloc ");
@@ -6230,7 +6246,38 @@ void implementMalloc() {
 
     bump = brk;
 
-    if (bump + size >= *(registers+REG_SP))
+    if(size==12*WORDSIZE && freeAddressList != 0) {
+        if(isValidVirtualAddress(freeAddressList)) {
+            if(isVirtualAddressMapped(pt, freeAddressList)) {
+                bump = loadVirtualMemory(pt, freeAddressList);
+                if(debug_malloc) {
+                    print(binaryName);
+                    print((int*) " Mallocating, size ");
+                    print(itoa(size, string_buffer, 10, 0, 0));
+                    print((int*) " bump ");
+                    print(itoa(bump, string_buffer, 10, 0, 0));
+                }
+            }
+            else
+                throwException(EXCEPTION_PAGEFAULT, freeAddressList);
+        }
+        else
+            throwException(EXCEPTION_PAGEFAULT, freeAddressList);
+        
+        *(registers+REG_V0) = freeAddressList;
+        freeAddressList = bump;
+        if(debug_malloc) {
+            print((int*) " Free from list, address ");
+            print(itoa(*(registers+REG_V0), string_buffer, 10, 0, 0));
+            print((int*) " bump ");
+            print(itoa(bump, string_buffer, 16, 8, 0));
+            print((int*) " freeAddressList ");
+            print(itoa(freeAddressList, string_buffer, 10, 0, 0));
+            printLineNumber((int*) "ln: ", lineNumber);
+            println();
+        }
+    }
+    else if (bump + size >= *(registers+REG_SP))
         throwException(EXCEPTION_HEAPOVERFLOW, 0);
     else {
         *(registers+REG_V0) = bump;
@@ -6247,7 +6294,7 @@ void implementMalloc() {
             print(itoa(brk, string_buffer, 10, 0, 0));
             print((int*) " bump: ");
             print(itoa(bump, string_buffer, 10, 0, 0));
-            
+            printLineNumber((int*) "ln: ", lineNumber);
             println();
         }
     }
@@ -6270,40 +6317,48 @@ void implementFree() {
     int size;
     int bump;
     int temp_result;
-    //TODO
+    int freeAddress;
     if (debug_free) {
         print(binaryName);
         print((int*) ": trying to free ");
         print(itoa(*(registers+REG_A0), string_buffer, 10, 0, 0));
-        print((int*) " bytes");
+        print((int*) " identifier: ");
+        printString(identifier);
         println();
     }
-    //liefert den stack pointer anstelle der Size
-    size = roundUp(*(registers+REG_A0), WORDSIZE);
+    //size = roundUp(*(registers+REG_A0), WORDSIZE);
     
-    bump = brk;
-    temp_result = bump - size;
-    //TODO grenze?
-    if (bump - temp_result >= *(registers+REG_GP))
-        throwException(EXCEPTION_BEGINOFHEAP, 0);
-    else {
-        *(registers+REG_V0) = bump;
-        brk = bump - temp_result;
-        
-        if (debug_free) {
-            print(binaryName);
-            print((int*) ": actually freeing ");
-            print(itoa(temp_result, string_buffer, 10, 0, 0));
-            print((int*) " bytes at virtual address ");
-            print(itoa(bump, string_buffer, 16, 8, 0));
-            print((int*) " break: ");
-            print(itoa(brk, string_buffer, 10, 0, 0));
-            print((int*) " bump: ");
-            print(itoa(bump, string_buffer, 10, 0, 0));
-            
-            println();
+    freeAddress = *(registers+REG_A0);
+    
+    if(isValidVirtualAddress(freeAddress)){
+        if(isVirtualAddressMapped(pt, freeAddress)) {
+            storeVirtualMemory(pt, freeAddress, freeAddressList);
+            if(debug_free) {
+                print((int*) " storeVirtualMemory ");
+            }
         }
+        else
+            throwException(EXCEPTION_PAGEFAULT, freeAddress);
     }
+    else
+        throwException(EXCEPTION_ADDRESSERROR, freeAddress);
+    
+    freeAddressList = freeAddress;
+    
+    *(registers+REG_V0) = 0;
+    
+    
+    if (debug_free) {
+        print((int*) ": actually freeing ");
+        print(itoa(freeAddressList, string_buffer, 10, 0, 0));
+        print((int*) " REG_V0: ");
+        print(itoa(*(registers+REG_V0), string_buffer, 10, 0, 0));
+        print((int*) " freeAddress: ");
+        print(itoa(freeAddress, string_buffer, 10, 0, 0));
+        printLineNumber((int*) "ln: ", lineNumber);
+        println();
+    }
+    
 }
 
 // -----------------------------------------------------------------
@@ -8714,12 +8769,13 @@ int main(int argc, int* argv) {
         println();
     }
     a = 2;
+    b = 4;
     ptr = malloc(4);
     *ptr = a;
     free(ptr);
-    ptr2 = malloc(8);
-    *ptr2 = a;
-    free(ptr2);
+    //ptr2 = malloc(4);
+    //*ptr2 = b;
+    //free(ptr2);
     //print((int*)"malloc...");
     //printString(ptr);
     //print(itoa(*(ptr), string_buffer, 10, 0, 0));
@@ -8778,7 +8834,7 @@ int main(int argc, int* argv) {
     print((int*)"m="); // == 0
     printString(itoa(m, string_buffer, 10, 0, 0));
     println();
-    printSymbolTable();
+    //printSymbolTable();
 
     print((int*)"End of Main");
     println();
