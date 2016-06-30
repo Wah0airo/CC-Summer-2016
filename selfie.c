@@ -1800,7 +1800,7 @@ void printSymbol(int symbol) {
     if (symbol == SYM_EOF)
         print((int*) "end of file");
     else
-        //print((int*) *(SYMBOLS + symbol));
+
         print((int*) SYMBOLS[symbol]);
 
     putCharacter(CHAR_DOUBLEQUOTE);
@@ -2320,7 +2320,7 @@ void deleteSymbolTable(int* symTable) {
         free(symTable);
         symTable = next;
     }
-    
+
 }
 
 int* searchSymbolTable(int* entry, int* string, int class) {
@@ -2390,7 +2390,7 @@ void printSymbolTable() {
         print(itoa(getClass(table), string_buffer, 10, 0, 0));
         println();
         table = getNextEntry(table);
-        
+
     }
     table = library_symbol_table;
     print((int*) "LibrarySymbolTable");
@@ -2837,12 +2837,6 @@ int* getVariable(int* variable) {
 
                 entry = getSymbolTableEntry(variable, FIELD);
 
-                //if(entry != (int*) 0) {
-                //  print((int*) "Field Entry: ");
-                //  printString(getString(entry));
-                //  printLineNumber((int*) " ln", lineNumber);
-                // println();
-                //}
 
                 if(entry == (int*) 0) {
 
@@ -3016,26 +3010,21 @@ void declare_array(int *id, int typ, int offset_loc, int whichTable) {
     i = 0;
     if (symbol == SYM_INTEGER) {
         if(literal > 0) {
-            //size_array = literal * WORDSIZE;
+
             index_1D = literal;
             size_array = index_1D * WORDSIZE;
             getSymbol();
             if(symbol == SYM_RBRACKET) {
                 getSymbol();
                 if(symbol == SYM_SEMICOLON) {
-                    //print((int*) "Declare 1D Array ");
-                    //printString(id);
-                    //print((int*) " alloc_Memory: ");
-                    //print(itoa(offset_loc, string_buffer, 10, 0, 0));
 
                     if(whichTable == GLOBAL_TABLE) {
-                        //size_array = index_1D * WORDSIZE;
+
                         offset_array = offset_loc + size_array;
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, -offset_array, size_array, 0, (int*) 0);
                     }
                     else {
-                        //offset_array = (offset_loc + WORDSIZE) - size_array;
-                        //offset_array = offset_loc + WORDSIZE  - size_array * WORDSIZE;
+
                         offset_array = offset_loc + WORDSIZE  - size_array;
                         createSymbolTableEntry(whichTable, id, lineNumber, ARRAY, typ, 0, offset_array, size_array, 0, (int*) 0);
                     }
@@ -3267,30 +3256,18 @@ int gr_factor(int* constFold) {
 
             entry = getVariable(variableOrProcedureName);
             getSymbol();
-            //print((int*) "factor [ :");
-            //printString(getString(entry));
-            //print((int*) " symbol:");
-            //printSymbol(symbol);
 
             type = gr_expression();
-            //print((int*) " after expr symbol:");
-            //printSymbol(symbol);
 
             if (type != INT_T)
                 typeWarning(INT_T, type);
 
             type = getType(entry);
             if (symbol == SYM_RBRACKET) {
-                getSymbol();
-                //print((int*) " after ] symbol:");
-                //printSymbol(symbol);
 
                 if(symbol==SYM_LBRACKET) {
                     getSymbol();
-                    //  print((int*) "factor [ cols:"); //Zugriff
-                    // print(itoa(getCols(entry), string_buffer, 10, 0, 0));
-                    // printLineNumber((int*) " ln ", lineNumber);
-                    // println();
+
                     load_integer(getCols(entry));
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_MULTU);
                     emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFLO);
@@ -3321,8 +3298,7 @@ int gr_factor(int* constFold) {
             emitIFormat(OP_ADDIU, currentTemporary(), currentTemporary(), getAddress(entry));
             emitRFormat(OP_SPECIAL, currentTemporary(), getScope(entry), currentTemporary(), FCT_ADDU);
             emitIFormat(OP_LW, currentTemporary(), currentTemporary(), 0);
-            //emitRFormat(OP_SPECIAL, currentTemporary(), getScope(entry), currentTemporary(), FCT_ADDU);
-            //emitIFormat(OP_LW, currentTemporary(), currentTemporary(), getAddress(entry));
+
         }
         //******************************
         //TODO Struct access (factor)
@@ -3330,9 +3306,7 @@ int gr_factor(int* constFold) {
             getSymbol();
             if(symbol == SYM_IDENTIFIER) {
                 entry = getSymbolTableEntry(variableOrProcedureName, STRUCT);
-                //print((int*) "factor struct: ");
-                //printString(variableOrProcedureName);
-                //println();
+
                 if(entry != (int*) 0) {
                     field = getVariable(identifier);
                     if(field != (int*) 0 ) {
@@ -3353,22 +3327,7 @@ int gr_factor(int* constFold) {
         }
         else
             type = load_variable(variableOrProcedureName);
-        //else {
 
-        //   type = load_variable(variableOrProcedureName);
-        //print((int*) "GR_FACTOR: ");
-        //printString(variableOrProcedureName);
-        //print((int*) " sym ");
-        //printSymbol(symbol);
-        //printLineNumber((int*) " ln:", lineNumber);
-        //println();
-        //  if(symbol==SYM_LBRACKET) {
-        //      type = access_array(variableOrProcedureName);
-        //  }
-        //  else {
-        //      type = load_variable(variableOrProcedureName);
-        //  }
-        // }
 
     }
     else if(symbol==SYM_NEGATION) {
@@ -4289,18 +4248,9 @@ void gr_statement() {
 
             // identifier = expression
         }
-        //Write array
-        //Zuweisung arr[i] = ...
-        //Access: identifier "[" expression "]"
-        //ZUweisung 2D array
+
         else if (symbol == SYM_LBRACKET) {
             entry =  getVariable(variableOrProcedureName);
-            //print((int*)"statement, [ var= ");
-            //printString(getString(entry));
-            //print((int*) " Address= ");
-            //print(itoa(getAddress(entry), string_buffer, 10, 0, 0));
-            //printLineNumber((int*) " ln: ", lineNumber);
-            //println();
 
             ltype = getType(entry);
             getSymbol();
@@ -4312,10 +4262,7 @@ void gr_statement() {
                 getSymbol();
                 if(symbol == SYM_LBRACKET) {
                     getSymbol();
-                    // load_integer(getCols(entry));
-                    // emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), 0, FCT_MULTU);
-                    // emitRFormat(OP_SPECIAL, 0, 0, previousTemporary(), FCT_MFLO);
-                    // tfree(1);
+
                     rtype = gr_expression();
 
                     emitRFormat(OP_SPECIAL, previousTemporary(), currentTemporary(), previousTemporary(), FCT_ADDU);
@@ -4341,12 +4288,7 @@ void gr_statement() {
             //Array Assignment (write slot): identifier "[" expression "]" = expression
             if (symbol == SYM_ASSIGN) {
                 getSymbol();
-                //print((int*)"statement, id[]= ");
-                //printString(getString(entry));
-                //print((int*) " Address= ");
-                //print(itoa(getAddress(entry), string_buffer, 10, 0, 0));
-                //printLineNumber((int*) " ln: ", lineNumber);
-                //println();
+
                 rtype = gr_expression();
 
                 if (rtype != ltype)
@@ -4387,29 +4329,13 @@ void gr_statement() {
                                 if(getScope(entry)==28) {
                                     entryFieldList = global_symbol_table;
                                     pointerToStruct = getSymbolTableEntry(variableOrProcedureName, STRUCT);
-                                    //print((int*) "STRUCT malloc global: ");
-                                    //print(itoa(memsize, string_buffer, 10, 0, 0));
-                                    //print((int*) " Pointer2structName ");
-                                    //printString(variableOrProcedureName);
-                                    //print((int*) " StructName ");
-                                    //printString(getString(getStruct(pointerToStruct)));
-                                    //print((int*) " break=");
-                                    //print(itoa(brk, string_buffer, 10, 0, 0));
-                                    //printLineNumber((int*) "ln:", lineNumber);
-                                    //println();
+
                                     while(entryFieldList != (int*) 0) {
                                         if(getClass(entryFieldList)==FIELD) {
                                             if(stringCompare(getString(getStruct(entryFieldList)), getString(getStruct(pointerToStruct)))){
                                                 allocatedMemory = allocatedMemory + WORDSIZE;
                                                 setAddress(entryFieldList, -allocatedMemory);
-                                                //*fieldList = entry;
-                                                //printString(getString(entryFieldList));
-                                                //print((int*) " address: ");
-                                                //print(itoa(-allocatedMemory, string_buffer, 10, 0, 0));
-                                                //print((int*) " globalMemory: ");
-                                                //print(itoa(allocatedMemory, string_buffer, 10, 0, 0));
-                                                //println();
-                                                //*fieldList = entry;
+
 
                                             }
                                         }
@@ -4424,16 +4350,7 @@ void gr_statement() {
                                 else if(getScope(entry)==30){
                                     entryFieldList = local_symbol_table;
                                     pointerToStruct = getSymbolTableEntry(variableOrProcedureName, STRUCT);
-                                    //print((int*) "STRUCT malloc local: ");
-                                    //print(itoa(memsize, string_buffer, 10, 0, 0));
-                                    //print((int*) " Pointer2structName ");
-                                    //printString(variableOrProcedureName);
-                                    //print((int*) " StructName ");
-                                    //printString(getString(getStruct(pointerToStruct)));
-                                    //print((int*) " break=");
-                                    //print(itoa(brk, string_buffer, 10, 0, 0));
-                                    //printLineNumber((int*) "ln:", lineNumber);
-                                    //println();
+
 
                                     while(entryFieldList != (int*) 0) {
                                         if(getClass(entryFieldList)==FIELD) {
@@ -4441,12 +4358,7 @@ void gr_statement() {
                                                 fieldAddress = localMemory * WORDSIZE;
                                                 localMemory = localMemory + 1;
                                                 setAddress(entryFieldList, -fieldAddress);
-                                                //printString(getString(entryFieldList));
-                                                //print((int*) " address: ");
-                                                //print(itoa(-fieldAddress, string_buffer, 10, 0, 0));
-                                                //print((int*) " localMemory: ");
-                                                //print(itoa(localMemory, string_buffer, 10, 0, 0));
-                                                //println();
+
                                             }
                                         }
                                         entryFieldList = getNextEntry(entryFieldList);
@@ -4493,32 +4405,18 @@ void gr_statement() {
         //TODO struct access?
         //*********************************
         else if (symbol == SYM_ARROW) {
-            //access_struct_field(variableOrProcedureName);
-            //entry = getVariable(variableOrProcedureName);
-            //entry = getStructTableEntry(variableOrProcedureName);
+
             entry = getSymbolTableEntry(variableOrProcedureName, STRUCT);
-            //print((int*) "Statement struct: ");
-            //print(getString(entry));
-            //printLineNumber((int*)"ln: ", lineNumber);
-            //println();
+
             //ltype = getType(entry);
             getSymbol();
             if(symbol == SYM_IDENTIFIER) {
                 struct_entry = getVariable(identifier);
                 ltype = STRUCT_T;
-                //print((int*) "Statement ->field ");
-                //printString(getString(struct_entry));
-                //printLineNumber((int*)"ln: ", lineNumber);
-                //println();
+
                 getSymbol();
                 if(symbol == SYM_ASSIGN) {
-                    //  print((int*) "field=exp ");
-                    //  print((int*) " field,scope= ");
-                    //  print(itoa(getScope(struct_entry), string_buffer, 10, 0, 0));
-                    //  print((int*) " field,addr= ");
-                    //  print(itoa(getAddress(struct_entry), string_buffer, 10, 0, 0));
-                    //  printLineNumber((int*)"ln: ", lineNumber);
-                    //  println();
+
                     getSymbol();
                     rtype = gr_expression();
                     emitIFormat(OP_SW, getScope(struct_entry), currentTemporary(), getAddress(struct_entry));
@@ -4594,10 +4492,6 @@ void struct_field(int offset, int* entry) {
     }
 }
 
-// void access_struct_field(int* struct_name) {
-//
-// }
-
 int gr_struct(int whichTable, int* address_struct) {
     int* variableOrProcedureName;
     int number_of_fields;
@@ -4605,40 +4499,21 @@ int gr_struct(int whichTable, int* address_struct) {
     int* entry;
 
     type = STRUCT_T;
-    //print((int*)"gr_struct ");
-    //printSymbol(symbol);
-    //print((int*)" ");
-    //print(identifier);
-    //printLineNumber((int*)"ln: ", lineNumber);
-    //println();
+
     //variableOrProcedureName = identifier;
     if (symbol == SYM_IDENTIFIER) {
         getSymbol();
-        //  print((int*)" . ");
-        //  printSymbol(symbol);
-        //  printLineNumber((int*)"ln: ", lineNumber);
-        //  println();
+
 
         variableOrProcedureName = identifier;
         //instantiation
         if (symbol==SYM_ASTERISK) {
             getSymbol();
 
-            //    print((int*)" .. ");
-            //    printSymbol(symbol);
-            //    print((int*)" ");
-            //    print(identifier);
-            //    printLineNumber((int*)"ln: ", lineNumber);
-            //    println();
 
             if(symbol ==SYM_IDENTIFIER) {
                 getSymbol();
-                //      print((int*)" ... ");
-                //      printSymbol(symbol);
-                //      print((int*)" ");
-                //      print(identifier);
-                //      printLineNumber((int*)"ln: ", lineNumber);
-                //      println();
+
                 if(symbol == SYM_SEMICOLON) {
                     type = STRUCT_T;
                     //void createSymbolTableEntry(int which, int* string, int line, int class, int type, int value, int address, int size, int cols, int* nextStruct);
@@ -4674,38 +4549,20 @@ int gr_struct(int whichTable, int* address_struct) {
             while(isStruct()) {
                 //struct_field(0, number_of_fields);
                 if(whichTable == GLOBAL_TABLE) {
-                    //print((int*)" STRUCT GLOBAL_TABLE ");
-                    //printSymbol(symbol);
-                    //print((int*)" #fields:");
-                    //print(itoa(number_of_fields, string_buffer, 10, 0, 0));
-                    //print((int*)" GST:");
-                    //printString(getString(global_struct_table));
-                    //printLineNumber((int*)"ln: ", lineNumber);
-                    //println();
+
 
                     gr_variable(0, global_struct_table);
 
                 }
                 else if(whichTable == LOCAL_TABLE) {
-                    //print((int*)" STRUCT LOCAL_TABLE ");
-                    //printSymbol(symbol);
-                    //print((int*)" #fields:");
-                    //print(itoa(number_of_fields, string_buffer, 10, 0, 0));
-                    //print((int*)" LST:");
-                    //printString(getString(local_struct_table));
-                    //printLineNumber((int*)"ln: ", lineNumber);
-                    //println();
+
                     gr_variable(0, local_struct_table);
                 }
                 number_of_fields = number_of_fields + 1;
 
                 if(symbol == SYM_SEMICOLON) {
                     getSymbol();
-                    //return type;
-                    //  print((int*)" .** ");
-                    //  printSymbol(symbol);
-                    //  printLineNumber((int*)"ln: ", lineNumber);
-                    //  println();
+
                 }
                 else
                     syntaxErrorMessage((int*) "; expected");
@@ -4714,10 +4571,7 @@ int gr_struct(int whichTable, int* address_struct) {
 
             if(symbol == SYM_RBRACE) {
                 getSymbol();
-                // print((int*)" .*** ");
-                // printSymbol(symbol);
-                // printLineNumber((int*)"ln: ", lineNumber);
-                // println();
+
             }
             else {
                 syntaxErrorMessage((int*) "} expected");
@@ -4791,9 +4645,7 @@ void gr_variable(int offset, int* new_struct) {
         ident = identifier;
         getSymbol();
         if(symbol == SYM_LBRACKET) {
-            //print((int*)" gr_variable vor declare_array ");
-            //printSymbol(symbol);
-            //println();
+
             getSymbol();
             declare_array(ident, type, offset, LOCAL_TABLE);
         }
@@ -6233,7 +6085,7 @@ void implementMalloc() {
     int size;
     int bump;
     int address;
-    
+
     if (debug_malloc) {
         print(binaryName);
         print((int*) ": trying to malloc ");
@@ -6263,7 +6115,7 @@ void implementMalloc() {
         }
         else
             throwException(EXCEPTION_PAGEFAULT, freeAddressList);
-        
+
         *(registers+REG_V0) = freeAddressList;
         freeAddressList = bump;
         if(debug_malloc) {
@@ -6301,15 +6153,15 @@ void implementMalloc() {
 }
 
 void emitFree() {
-    
+
     createSymbolTableEntry(LIBRARY_TABLE, (int*) "free", 0, PROCEDURE, INTSTAR_T, 0, binaryLength, 0, 0, (int*) 0);
-    
+
     emitIFormat(OP_LW, REG_SP, REG_A0, 0); // size
     emitIFormat(OP_ADDIU, REG_SP, REG_SP, -WORDSIZE);
-    
+
     emitIFormat(OP_ADDIU, REG_ZR, REG_V0, SYSCALL_FREE);
     emitRFormat(OP_SPECIAL, 0, 0, 0, FCT_SYSCALL);
-    
+
     emitRFormat(OP_SPECIAL, REG_RA, 0, 0, FCT_JR);
 }
 
@@ -6327,9 +6179,9 @@ void implementFree() {
         println();
     }
     //size = roundUp(*(registers+REG_A0), WORDSIZE);
-    
+
     freeAddress = *(registers+REG_A0);
-    
+
     if(isValidVirtualAddress(freeAddress)){
         if(isVirtualAddressMapped(pt, freeAddress)) {
             storeVirtualMemory(pt, freeAddress, freeAddressList);
@@ -6342,12 +6194,12 @@ void implementFree() {
     }
     else
         throwException(EXCEPTION_ADDRESSERROR, freeAddress);
-    
+
     freeAddressList = freeAddress;
-    
+
     *(registers+REG_V0) = 0;
-    
-    
+
+
     if (debug_free) {
         print((int*) ": actually freeing ");
         print(itoa(freeAddressList, string_buffer, 10, 0, 0));
@@ -6358,7 +6210,7 @@ void implementFree() {
         printLineNumber((int*) "ln: ", lineNumber);
         println();
     }
-    
+
 }
 
 // -----------------------------------------------------------------
@@ -7332,7 +7184,6 @@ void fct_sllv() {
     }
     if(interpret) {
         *(registers+rd) = leftShift(*(registers+rt), *(registers+rs));
-        //print((int *) "fct_sllv rd=");
         pc = pc+ WORDSIZE;
     }
     if (debug) {
@@ -8773,15 +8624,6 @@ int main(int argc, int* argv) {
     ptr = malloc(4);
     *ptr = a;
     free(ptr);
-    //ptr2 = malloc(4);
-    //*ptr2 = b;
-    //free(ptr2);
-    //print((int*)"malloc...");
-    //printString(ptr);
-    //print(itoa(*(ptr), string_buffer, 10, 0, 0));
-    //println();
-    
-
     //consTests();
     testArrays();
     // test2Darrays();
@@ -8834,7 +8676,7 @@ int main(int argc, int* argv) {
     print((int*)"m="); // == 0
     printString(itoa(m, string_buffer, 10, 0, 0));
     println();
-    //printSymbolTable();
+
 
     print((int*)"End of Main");
     println();
