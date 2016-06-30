@@ -330,41 +330,7 @@ int isLiteralNumber = 0;
 // ------------------------- INITIALIZATION ------------------------
 
 void initScanner () {
-    //SYMBOLS = malloc(32 * SIZEOFINTSTAR);
-
-    //*(SYMBOLS + SYM_IDENTIFIER)   = (int) "identifier";
-    //*(SYMBOLS + SYM_INTEGER)      = (int) "integer";
-    //*(SYMBOLS + SYM_VOID)         = (int) "void";
-    //*(SYMBOLS + SYM_INT)          = (int) "int";
-    //*(SYMBOLS + SYM_SEMICOLON)    = (int) ";";
-    //*(SYMBOLS + SYM_IF)           = (int) "if";
-    //*(SYMBOLS + SYM_ELSE)         = (int) "else";
-    //*(SYMBOLS + SYM_PLUS)         = (int) "+";
-    //*(SYMBOLS + SYM_MINUS)        = (int) "-";
-    //*(SYMBOLS + SYM_ASTERISK)     = (int) "*";
-    //*(SYMBOLS + SYM_DIV)          = (int) "/";
-    //*(SYMBOLS + SYM_EQUALITY)     = (int) "==";
-    //*(SYMBOLS + SYM_ASSIGN)       = (int) "=";
-    //*(SYMBOLS + SYM_LPARENTHESIS) = (int) "(";
-    //*(SYMBOLS + SYM_RPARENTHESIS) = (int) ")";
-    //*(SYMBOLS + SYM_LBRACE)       = (int) "{";
-    //*(SYMBOLS + SYM_RBRACE)       = (int) "}";
-    //*(SYMBOLS + SYM_WHILE)        = (int) "while";
-    //*(SYMBOLS + SYM_RETURN)       = (int) "return";
-    //*(SYMBOLS + SYM_COMMA)        = (int) ",";
-    //*(SYMBOLS + SYM_LT)           = (int) "<";
-    //*(SYMBOLS + SYM_LEQ)          = (int) "<=";
-    //*(SYMBOLS + SYM_GT)           = (int) ">";
-    //*(SYMBOLS + SYM_GEQ)          = (int) ">=";
-    //*(SYMBOLS + SYM_NOTEQ)        = (int) "!=";
-    //*(SYMBOLS + SYM_MOD)          = (int) "%";
-    //*(SYMBOLS + SYM_CHARACTER)    = (int) "character";
-    //*(SYMBOLS + SYM_STRING)       = (int) "string";
-    //*(SYMBOLS + SYM_LSHIFT)         = (int) "<<";
-    //*(SYMBOLS + SYM_RSHIFT)         = (int) ">>";
-    //*(SYMBOLS + SYM_LBRACKET)       = (int) "[";
-    //*(SYMBOLS + SYM_RBRACKET)       = (int) "]";
-
+    
     SYMBOLS[0]      = (int) "identifier";
     SYMBOLS[1]      = (int) "integer";
     SYMBOLS[2]      = (int) "void";
@@ -581,7 +547,7 @@ void setStructFields(int* entry, int* fields)     {
 void setStructSize(int* entry, int size)          {
     *(entry + 6) = size;
 }
-//should still be tested
+
 struct SymbolTable {
     struct SymbolTable* next;
     int* string;
@@ -690,8 +656,6 @@ void gr_variable(int offset, int* new_struct);
 void gr_initialization(int* name, int offset, int type);
 void gr_procedure(int* procedure, int returnType);
 void gr_cstar();
-void struct_field(int offset, int* entry);
-// void access_struct_field(int* struct_name);
 int  gr_struct(int whichTable, int* address_struct);
 int ifLeftFlag(int ill,int leftValue, int *constFold);
 
@@ -1915,21 +1879,6 @@ int findNextCharacter() {
     }
 }
 
-// int isCharacterLetter() {
-//     if (character >= 'a')
-//         if (character <= 'z')
-//             return 1;
-//         else
-//             return 0;
-//         else if (character >= 'A')
-//             if (character <= 'Z')
-//                 return 1;
-//             else
-//                 return 0;
-//             else
-//                 return 0;
-// }
-
 int isCharacterLetter() {
     if ((character >= 'a' && character <= 'z') || (character >= 'A' &&  character <= 'Z'))
             return 1;
@@ -1966,7 +1915,6 @@ int isNotDoubleQuoteOrEOF() {
 }
 
 int identifierStringMatch(int keyword) {
-    //return stringCompare(identifier, (int*) *(SYMBOLS + keyword));
     return stringCompare(identifier, (int*) SYMBOLS[keyword]);
 }
 
@@ -2235,10 +2183,8 @@ int getSymbol() {
         }
         else {
             symbol = SYM_NEGATION;
-            //syntaxErrorCharacter(CHAR_EQUAL);
+            
         }
-
-        //symbol = SYM_NOTEQ;
 
     }
     else if (character == CHAR_PERCENTAGE) {
@@ -3300,8 +3246,7 @@ int gr_factor(int* constFold) {
             emitIFormat(OP_LW, currentTemporary(), currentTemporary(), 0);
 
         }
-        //******************************
-        //TODO Struct access (factor)
+        //Struct access
         else if(symbol == SYM_ARROW) {
             getSymbol();
             if(symbol == SYM_IDENTIFIER) {
@@ -3329,9 +3274,9 @@ int gr_factor(int* constFold) {
             type = load_variable(variableOrProcedureName);
 
 
-    }
+    } // ! negation
     else if(symbol==SYM_NEGATION) {
-        //Do Something.....
+        
         getSymbol();
         type = gr_expression();
         emitIFormat(OP_BEQ, REG_ZR, currentTemporary(), 4);
@@ -3342,7 +3287,7 @@ int gr_factor(int* constFold) {
     else if (symbol == SYM_INTEGER) {
         isLiteralNumber = 1;
         *constFold = literal;
-        //load_integer(literal);
+        
 
         getSymbol();
 
@@ -3523,60 +3468,60 @@ int  gr_shiftExpression(int* constFold) {
     int ltype;
     int operatorSymbol;
     int rtype;
-
+    
     int leftValue;
     int rightValue;
     int ill;
     int irl;
-
+    
     ltype = gr_simpleExpression(constFold);
-
+    
     if(isLiteralNumber == 1) {
         leftValue = *(constFold);
         ill = isLiteralNumber;
-
+        
     }
     else{
         ill = 0;
         leftValue = 0;
         isLiteralNumber = 0;
     }
-
+    
     *(constFold) = 0;
     isLiteralNumber = 0;
-
+    
     // assert: allocatedTemporaries == n + 1
-
+    
     while(isLeftShiftOrRightShift()) {
-
+        
         operatorSymbol = symbol;
-
+        
         getSymbol();
-        //isLiteralNumber = 0;
-         gr_simpleExpression(constFold);
-
-            irl = isLiteralNumber;
-            rightValue = *(constFold);
+        
+        gr_simpleExpression(constFold);
+        
+        irl = isLiteralNumber;
+        rightValue = *(constFold);
         if(ill) {
             if(irl) {
                 if(operatorSymbol == SYM_LSHIFT)
                     leftValue = leftValue << rightValue;
-
+                
                 else if(operatorSymbol == SYM_RSHIFT)
                     leftValue = leftValue >> rightValue;
-
+                
             }
             else{
                 load_integer(leftValue);
                 if(operatorSymbol == SYM_LSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_SLLV);
-
+                
                 else if(operatorSymbol == SYM_RSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_SRLV);
-
+                
                 tfree(1);
                 ill = 0;
-
+                
             }
         }
         else{
@@ -3585,32 +3530,32 @@ int  gr_shiftExpression(int* constFold) {
                 load_integer(leftValue);
                 if (operatorSymbol == SYM_LSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(), previousTemporary(), previousTemporary(), FCT_SLLV);
-
+                
                 else if (operatorSymbol == SYM_RSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_SRLV);
-
+                
                 tfree(1);
                 ill = 0;
-
+                
             }
             else{
                 if (operatorSymbol == SYM_LSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(), FCT_SLLV);
                 else if (operatorSymbol == SYM_RSHIFT)
                     emitRFormat(OP_SPECIAL,currentTemporary(),previousTemporary(),previousTemporary(),FCT_SRLV);
-
+                
                 tfree(1);
                 ill = 0;
             }
         }
         isLiteralNumber = 0;
         *(constFold) = 0;
-
+        
     }
-
+    
     ifLeftFlag(ill, leftValue ,constFold);
     // assert: allocatedTemporaries == n + 1
-
+    
     return ltype;
 }
 
@@ -3698,7 +3643,7 @@ int gr_simpleExpression(int *constFold) {
                 else if(operatorSymbol == SYM_MINUS)
                     leftValue = leftValue - rightValue;
 
-                // isLiteralNumber = 1;
+                
             }
             else{
                 load_integer(leftValue);
@@ -3729,9 +3674,8 @@ int gr_simpleExpression(int *constFold) {
 
                 if (operatorSymbol == SYM_PLUS) {
                     if (ltype == INTSTAR_T && rtype == INT_T) {
-                        // if (rtype == INT_T)
-                            // pointer arithmetic: factor of 2^2 of integer operand
-                            emitLeftShiftBy(2);
+                        // pointer arithmetic: factor of 2^2 of integer operand
+                        emitLeftShiftBy(2);
                     } else if (rtype == INTSTAR_T)
                         typeWarning(ltype, rtype);
 
@@ -3794,7 +3738,7 @@ int gr_comparison() {
     ltype = gr_shiftExpression(constFold);
 
     if(isLiteralNumber == 1) {
-        // ill = 1;
+        
         leftValue = *(constFold);
 
         if(leftValue < 0) {
@@ -3935,7 +3879,7 @@ int gr_expression() {
             tfree(1);
             rtype = gr_comparison();
         }
-        //rtype = gr_comparison();
+        
         if (ltype != rtype)
             typeWarning(ltype, rtype);
         fixup_relative(jumpForward);
@@ -4225,7 +4169,7 @@ void gr_statement() {
             syntaxErrorSymbol(SYM_LPARENTHESIS);
     }
     // identifier "=" expression | call
-    //TODO array
+    
     else if (symbol == SYM_IDENTIFIER) {
         variableOrProcedureName = identifier;
 
@@ -4285,7 +4229,7 @@ void gr_statement() {
             emitLeftShiftBy(2);
             emitIFormat(OP_ADDIU, currentTemporary(), currentTemporary(), getAddress(entry));
             emitRFormat(OP_SPECIAL, currentTemporary(), getScope(entry), currentTemporary(),  FCT_ADDU);
-            //Array Assignment (write slot): identifier "[" expression "]" = expression
+            //Array Assignment  identifier "[" expression "]" = expression
             if (symbol == SYM_ASSIGN) {
                 getSymbol();
 
@@ -4314,6 +4258,7 @@ void gr_statement() {
 
             getSymbol();
             //allocating address dynamically for structs;
+            //this code doesn't works
             if(ltype==STRUCT_T) {
                 //30 FP (local), 28 GP (global)
                 if(stringCompare(identifier, (int*)"malloc")) {
@@ -4339,8 +4284,7 @@ void gr_statement() {
 
                                             }
                                         }
-                                        //*fieldList = *(fieldList + 1);
-                                        //fieldList = malloc(SIZEOFINTSTAR);
+                                        
                                         entryFieldList = getNextEntry(entryFieldList);
 
                                     }
@@ -4397,12 +4341,11 @@ void gr_statement() {
             if (symbol == SYM_SEMICOLON)
                 getSymbol();
             else {
-                print((int*) "ERROR statement, array = ");
                 syntaxErrorSymbol(SYM_SEMICOLON);
             }
         }
 
-        //TODO struct access?
+        // struct access
         //*********************************
         else if (symbol == SYM_ARROW) {
 
@@ -4437,9 +4380,6 @@ void gr_statement() {
 
         }
         else {
-            print((int*)"statemt, SEU, after ->");
-            printLineNumber((int*) "ln:", lineNumber);
-            println();
             syntaxErrorUnexpected();
         }
     }
@@ -4460,37 +4400,11 @@ void gr_statement() {
         if (symbol == SYM_SEMICOLON)
             getSymbol();
         else {
-            print((int*) "ERROR statement, return ");
             syntaxErrorSymbol(SYM_SEMICOLON);
         }
     }
 }
-//still unused
-void struct_field(int offset, int* entry) {
-    int type;
-    int* ident;
-    int size_1;
-    int size_2;
-    size_1 = 0;
-    size_2 = 0;
 
-    type = gr_type();
-    if(symbol == SYM_IDENTIFIER) {
-        ident = identifier;
-        getSymbol();
-        if(symbol == SYM_LBRACKET) {
-            getSymbol();
-            //int* id, int typ, int off, int whichTable
-            //still need to be tested
-            //2D arrays still not working
-            declare_array(identifier, INT_T, offset, LOCAL_TABLE);
-        }
-    }
-    else {
-        syntaxErrorMessage((int*) "identifier expected");
-        createSymbolTableEntry(LOCAL_TABLE, (int*) "missing variable name", lineNumber, FIELD, type, 0, offset, 1, 1,  (int*) 0);
-    }
-}
 
 int gr_struct(int whichTable, int* address_struct) {
     int* variableOrProcedureName;
@@ -4516,7 +4430,6 @@ int gr_struct(int whichTable, int* address_struct) {
 
                 if(symbol == SYM_SEMICOLON) {
                     type = STRUCT_T;
-                    //void createSymbolTableEntry(int which, int* string, int line, int class, int type, int value, int address, int size, int cols, int* nextStruct);
                     entry = getStructTableEntry(variableOrProcedureName);
                     if(entry != (int*) 0) {
 
@@ -4537,8 +4450,7 @@ int gr_struct(int whichTable, int* address_struct) {
             else
                 syntaxErrorMessage((int*) "identifier expected");
             //type = STRUCT_T;
-            //void createSymbolTableEntry(int which, int* string, int line, int class, int type, int value, int address, int size, int cols, int* nextStruct);
-            //createSymbolTableEntry(whichTable, identifier, lineNumber, STRUCT, type, 0, 0, 0, 0, (int*) 0);
+            
         }
         //definition
         else if(symbol == SYM_LBRACE) {
@@ -4547,7 +4459,6 @@ int gr_struct(int whichTable, int* address_struct) {
             createStructTableEntry(whichTable, variableOrProcedureName, lineNumber);
             number_of_fields = 0;
             while(isStruct()) {
-                //struct_field(0, number_of_fields);
                 if(whichTable == GLOBAL_TABLE) {
 
 
@@ -4859,16 +4770,15 @@ void gr_procedure(int* procedure, int returnType) {
             }
             else if (symbol == SYM_STRUCT) {
                 getSymbol();
-                //localVariables = localVariables + 1;
-                //*variableCounter = localVariables;
+                
                 gr_struct(LOCAL_TABLE, (int*) 0);
-                //localVariables = *(variableCounter);
+                
             }
 
             if (symbol == SYM_SEMICOLON)
                 getSymbol();
             else {
-                print((int*) "ERROR procedure, struct ");
+                
                 syntaxErrorSymbol(SYM_SEMICOLON);
             }
         }
@@ -4903,9 +4813,7 @@ void gr_procedure(int* procedure, int returnType) {
             printSymbol(symbol);
             println();
         }
-        print((int*) "grprocedure, syntaxErrorUnexpected");
-        printLineNumber((int*) "ln:", lineNumber);
-        println();
+        
         syntaxErrorUnexpected();
     }
     deleteSymbolTable(local_symbol_table);
@@ -4949,32 +4857,9 @@ void gr_cstar() {
         }
         else if(symbol == SYM_STRUCT) {
             getSymbol();
-            //*globalVariableCounter = allocatedMemory;
+            
             type = gr_struct(GLOBAL_TABLE, (int*) 0);
-            //allocatedMemory = *(globalVariableCounter);
-
-            //if(symbol == SYM_IDENTIFIER)
-            //  getSymbol();
-            //else
-            //syntaxErrorSymbol(SYM_IDENTIFIER);
-
-
-            //else {
-            //  variableOrProcedureName = identifier;
-
-            //if (symbol == SYM_ASTERISK) {
-            //  getSymbol();
-
-            //if (symbol == SYM_IDENTIFIER)
-            //getSymbol();
-            // else
-            //   syntaxErrorSymbol(SYM_IDENTIFIER);
-
-            //type = STRUCT_T;
-            //createSymbolTableEntry(GLOBAL_TABLE, identifier, lineNumber, STRUCT, type, 0, 0 , 1, 1, (int *) 0);
-            //setStruct(global_symbol_table, getStructTableEntry(variableOrProcedureName));
-            //}
-            //}
+            
             if (symbol == SYM_SEMICOLON)
                 getSymbol();
             else
@@ -4994,7 +4879,7 @@ void gr_cstar() {
                     gr_procedure(variableOrProcedureName, type);
 
                 else if(symbol == SYM_LBRACKET) {
-                    //allocatedMemory = allocatedMemory + WORDSIZE;
+                    
                     getSymbol();
                     if(symbol == SYM_INTEGER) {
                         index_1D = literal;
@@ -5049,10 +4934,7 @@ void gr_cstar() {
                     else {
                         syntaxErrorMessage((int*) " integer expected");
                     }
-                    //declare_array(variableOrProcedureName, type, allocatedMemory, GLOBAL_TABLE);
-                    //if(symbol == SYM_SEMICOLON)
-                    //getSymbol();
-                    //[[[[]]]]
+                    
                 }
                 else {
                     allocatedMemory = allocatedMemory + WORDSIZE;
@@ -6178,7 +6060,7 @@ void implementFree() {
         printString(identifier);
         println();
     }
-    //size = roundUp(*(registers+REG_A0), WORDSIZE);
+    
 
     freeAddress = *(registers+REG_A0);
 
@@ -8624,7 +8506,7 @@ int main(int argc, int* argv) {
     ptr = malloc(4);
     *ptr = a;
     free(ptr);
-    //consTests();
+    consTests();
     testArrays();
     // test2Darrays();
 
